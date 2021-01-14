@@ -1,2 +1,2 @@
 # CS261-Project
-CS261 Software engineering project.
+This is our CS261 project.
