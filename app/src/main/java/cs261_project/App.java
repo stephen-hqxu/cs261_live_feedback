@@ -1,6 +1,3 @@
-/*
- * CS261 SE project
- */
 package cs261_project;
 
 import org.springframework.boot.SpringApplication;
@@ -17,6 +14,8 @@ public class App {
     private static App program;
     //app context
     private ConfigurableApplicationContext context;
+    //database connection
+    private DatabaseConnection db;
 
     public App(){
 
@@ -27,8 +26,12 @@ public class App {
      * @param args Launch arguments
      */
     private final void run(String[] args){
+        //setup database
+        this.db = new DatabaseConnection();
+
         //launch the server
         this.context = SpringApplication.run(App.program.getClass(), args);
+
     }
 
     /**
@@ -45,6 +48,14 @@ public class App {
      */
     public final ConfigurableApplicationContext getContext(){
         return this.context;
+    }
+
+    /**
+     * Get application database connection
+     * @return The database connection
+     */
+    public final DatabaseConnection getDbConnection(){
+        return this.db;
     }
 
     public static void main(String[] args) {

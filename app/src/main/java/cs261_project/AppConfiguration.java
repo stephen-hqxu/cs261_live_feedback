@@ -1,5 +1,7 @@
 package cs261_project;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -7,6 +9,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -23,7 +28,9 @@ import org.thymeleaf.templatemode.TemplateMode;
 @EnableWebMvc
 @ComponentScan
 public class AppConfiguration implements WebMvcConfigurer, ApplicationContextAware {
-    //applications
+    //Database name goes here, the root location is /app/, same as which for build.gradle
+    private static final String DATABASE_NAME = "data.db";
+    //application
     private ApplicationContext context;
 
     public AppConfiguration(){
@@ -47,6 +54,28 @@ public class AppConfiguration implements WebMvcConfigurer, ApplicationContextAwa
     public void addFormatters(FormatterRegistry registry) {
         WebMvcConfigurer.super.addFormatters(registry);
         //TODO, more formatters will be added later
+    }
+
+    @Bean
+    static public DataSource dataSource(){
+        DriverManagerDataSource source = new DriverManagerDataSource();
+        //tell JDBC something about the database we are using
+        source.setDriverClassName("org.sqlite.JDBC");
+        source.setUrl("jdbc:sqlite:" + AppConfiguration.DATABASE_NAME);
+        
+        return source;
+    }
+
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(){
+        LocalContainerEntityManagerFactoryBean entity = new LocalContainerEntityManagerFactoryBean();
+        //since Spring doesn't support SQLite, we need to tell the API how to use it...
+        entity.setDataSource(AppConfiguration.dataSource());
+        entity.setPersistenceXmlLocation("classpath:/static/persistence/persistence.xml");
+        //entity.setPackagesToScan("");
+        entity.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+
+        return entity;
     }
 
     @Bean

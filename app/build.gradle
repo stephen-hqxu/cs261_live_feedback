@@ -14,17 +14,24 @@ plugins {
 
 group = 'cs261_project'
 version = '0.1.0-Alpha'
-sourceCompatibility = '13'
+sourceCompatibility = '11'
 
 repositories {
     // Use mavenCentral for resolving dependencies.
     mavenCentral()
 }
 
+configurations{
+    compile.exclude module: "spring-boot-starter-tomcat"
+}
+
 dependencies {
-    //implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.xerial:sqlite-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     //implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation "org.springframework.boot:spring-boot-starter-jetty"
     //implementation 'org.springframework.boot:spring-boot-starter-web-services'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
