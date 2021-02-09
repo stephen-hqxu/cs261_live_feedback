@@ -1,6 +1,26 @@
 # CS261-Project
 This is our CS261 project.
 
+## Getting Started
+Navigate to the project directory where the **gradlew** files are located, then:
+
+- Windows:
+
+In cmd or Powershell:
+```sh
+gradlew.bat run
+```
+
+- Mac/Linux:
+
+```sh
+gradlew run
+```
+
+It may take a minute for a initial setup, once it's done all subsequent builds will be faster.
+
+All dependencies we are using can be found in /app/build.gradle :+1:
+
 ## File Structure
 
 **classpath: /app/src/main/**
