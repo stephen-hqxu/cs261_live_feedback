@@ -3,6 +3,7 @@ package cs261_project;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Handle general web page requests such as login and registrations
@@ -23,10 +24,21 @@ public class IndexProcessor {
     @GetMapping("/")
     public final String serveIndex(Model model){
         //test for database
-        final String greet = App.getInstance().getDbConnection().greet();
+        //final String greet = App.getInstance().getDbConnection().greet();
         //assign the variable with name "test" in the template index.html with value
         //model.addAttribute("test", "Say hello to our template function and " + greet);
         return "index";
     }
+
+    @GetMapping("login")
+    public final String serveLogin(){
+        return "login";
+    }
+
+    @GetMapping("joinEvent")
+    public final String serveJoinEvent(){
+        return "joinEvent";
+    }
+
 
 }
