@@ -10,6 +10,9 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 @SpringBootApplication
 public class App {
+    //server port number
+    private static final short PORT = 12345;
+    
     //The program
     private static App program;
     //app context
@@ -30,6 +33,7 @@ public class App {
         this.db = new DatabaseConnection();
 
         //launch the server
+        System.getProperties().put("server.port", App.PORT);
         this.context = SpringApplication.run(App.program.getClass(), args);
 
     }

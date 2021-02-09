@@ -11,6 +11,8 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
+import cs261_project.config.DatabaseConfiguration;
+
 /**
  * Handle data communication between the database
  * @author Group 12 - Stephen Xu, JuanYan Huo, Ellen Tatum, JiaQi Lv, Alexander Odewale
@@ -21,7 +23,7 @@ public class DatabaseConnection {
 
     public DatabaseConnection(){
         //setup database connection
-        this.source = new JdbcTemplate(AppConfiguration.dataSource());
+        this.source = new JdbcTemplate(DatabaseConfiguration.dataSource());
     }
 
     /**
