@@ -1,2 +1,34 @@
-<!-- For debug only, feel free to replace it -->
-<h1 style="color: tomato; font-family: chilanka;" th:text="${test}">Hello World.</h1>
+<!DOCTYPE html>
+<html lang="en"></html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<body>
+
+<div class="w3-container w3-center w3-large w3-indigo">
+    <div>
+        <h1> I am: </h1>
+    </div>
+</div>
+<br>
+<div class="w3-container w3-center">
+    <form name="selection" method="GET">
+        <input type="hidden" id="target" name="target" value="">
+        <button class="w3-btn w3-blue w3-round-xxlarge w3-padding " style="width:50%" onclick="targetHost()" type="submit" formaction="login.html" >A host</button><br><br>
+        <button class="w3-btn w3-blue w3-round-xxlarge w3-padding " style="width:50%" onClick="targetGuest()" type="submit" formaction="joinEvent.html" >A guest</button>
+    </form>
+</div>
+ 
+<script>
+    function targetHost() {
+        document.getElementById("target").value="Host";
+    }
+
+    function targetGuest() {
+        document.getElementById("target").value="Guest";
+    }
+</script>
+
+</body>
+</html>

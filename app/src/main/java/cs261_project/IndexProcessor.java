@@ -25,7 +25,7 @@ public class IndexProcessor {
         //test for database
         final String greet = App.getInstance().getDbConnection().greet();
         //assign the variable with name "test" in the template index.html with value
-        model.addAttribute("test", "Say hello to our template function and " + greet);
+        //model.addAttribute("test", "Say hello to our template function and " + greet);
         return "index";
     }
 
