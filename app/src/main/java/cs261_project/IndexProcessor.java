@@ -1,9 +1,15 @@
 package cs261_project;
 
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.server.ServerWebInputException;
 
 /**
  * Handle general web page requests such as login and registrations
@@ -11,34 +17,53 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Controller
 public class IndexProcessor {
+    //Server port number
+    @Value("${server.port}")
+    private String PORT;
     
     public IndexProcessor(){
 
     }
 
-    /**
-     * Testing method to show the web server and template engine works
-     * @param model Template model
-     * @return Template filename
-     */
     @GetMapping("/")
-    public final String serveIndex(Model model){
-        //test for database
-        //final String greet = App.getInstance().getDbConnection().greet();
-        //assign the variable with name "test" in the template index.html with value
-        //model.addAttribute("test", "Say hello to our template function and " + greet);
+    public final String serveIndex(){
         return "index";
     }
 
-    @GetMapping("login")
-    public final String serveLogin(){
+    @GetMapping("/login")
+    public final String serveLogin(Model model){
+        model.addAttribute("port", this.PORT);
         return "login";
     }
 
-    @GetMapping("joinEvent")
+    @PostMapping("/login")
+    public final String handleLogin(@RequestParam() Map<String, String> args) throws ServerWebInputException {
+        if(!args.get("selection").equals("login")){
+            //error handling, normally it won't trigger
+            throw new ServerWebInputException("Only login can be selected");
+        }
+        //read the username and password
+        final String username = args.get("username");
+        final String password = args.get("password");
+
+        //TODO processing login
+
+        return "redirect:/hostHomePage";
+    }
+
+    @GetMapping("/register")
+    public final String serveRegister(){
+        return "register";
+    }
+
+    @GetMapping("/joinEvent")
     public final String serveJoinEvent(){
         return "joinEvent";
     }
 
+    @GetMapping("/hostHomePage")
+    public final String servehostHomePage(){
+        return "hostHomePage";
+    }
 
 }
