@@ -4,6 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<title>Login</title>
 </head>
 <body>
 
@@ -13,13 +14,13 @@
     <br>
     <form class="w3-container w3-center" method="POST" action="login">
         <label class="w3-text-blue"><b>Username</b></label><br>
-        <input name="username" class="w3-input w3-border w3-light-grey w3-center" type="text" placeholder="Enter Username"> <br>
+        <input name="username" class="w3-input w3-border w3-light-grey w3-center" type="text" placeholder="Enter Username" required> <br>
         
         <label class="w3-text-blue"><b>Password</b></label><br>
-        <input name="password" class="w3-input w3-border w3-light-grey w3-center" type="text" placeholder="Enter Password"><br>
+        <input name="password" class="w3-input w3-border w3-light-grey w3-center" type="text" placeholder="Enter Password" required><br>
       
-        <!-- formaction will modify the redict mapping to the server, server url will become POST:/hostHomePage.html, which is undefined -->
-        <button name="selection" value="login" class="w3-btn w3-blue w3-round-xxlarge w3-padding " style="width:50%" type="submit">login</button><br><br>
+        <!-- formaction will modify the redirect mapping to the server, server url will become POST:/hostHomePage.html, which is undefined -->
+        <button name="selection" value="login" class="w3-btn w3-blue w3-round-xxlarge w3-padding" style="width:50%" type="submit">login</button><br><br>
         <label class="w3-text-blue"><b>Don't have an account?</b></label><br><br>
 
         <!-- There are two approaches to redirect using GET in a form, one is by using type="button" and click event in js, another is ask server to do that -->

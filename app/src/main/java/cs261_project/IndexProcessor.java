@@ -30,6 +30,11 @@ public class IndexProcessor {
         return "index";
     }
 
+    @GetMapping("/terms")
+    public final String serveTerms(){
+        return "terms";
+    }
+
     @GetMapping("/login")
     public final String serveLogin(Model model){
         model.addAttribute("port", this.PORT);
