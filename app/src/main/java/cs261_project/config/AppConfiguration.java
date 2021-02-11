@@ -6,14 +6,22 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
+import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Configuration class for web application
@@ -85,6 +93,26 @@ public class AppConfiguration implements WebMvcConfigurer, ApplicationContextAwa
         resolver.setViewNames(new String[]{"*.html"});
 
         return resolver;
+    }
+
+    @Bean
+    public SimpleUrlHandlerMapping customFaviconHandlerMapping() {
+        SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
+        mapping.setOrder(Integer.MIN_VALUE);
+        mapping.setUrlMap(Collections.singletonMap(
+                "/favicon.ico", faviconRequestHandler()));
+        return mapping;
+    }
+
+    @Bean
+    protected ResourceHttpRequestHandler faviconRequestHandler() {
+        ResourceHttpRequestHandler requestHandler
+                = new ResourceHttpRequestHandler();
+        ClassPathResource classPathResource
+                = new ClassPathResource("com/baeldung/images/");
+        List<Resource> locations = Arrays.asList(classPathResource);
+        requestHandler.setLocations(locations);
+        return requestHandler;
     }
     
 }
