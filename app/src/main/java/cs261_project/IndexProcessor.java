@@ -34,7 +34,7 @@ public class IndexProcessor {
         return "terms";
     }
 
-    @GetMapping("/login")
+    @GetMapping("/loginPage")
     public final String serveLogin(Model model){
         model.addAttribute("port", this.PORT);
         return "login";
@@ -52,7 +52,7 @@ public class IndexProcessor {
         return "redirect:/hostHomePage";
     }
 
-    @GetMapping("/register")
+    @GetMapping("/registerPage")
     public final String serveRegister(){
         return "register";
     }
@@ -66,7 +66,7 @@ public class IndexProcessor {
         return "redirect:/login";
     }
 
-    @GetMapping("/joinEvent")
+    @GetMapping("/joinEventPage")
     public final String serveJoinEvent(){
         return "joinEvent";
     }
