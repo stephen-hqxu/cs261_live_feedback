@@ -46,6 +46,7 @@ public class AppConfiguration implements WebMvcConfigurer, ApplicationContextAwa
     @Override
     public void addFormatters(FormatterRegistry registry) {
         WebMvcConfigurer.super.addFormatters(registry);
+        registry.addConverter(new UserTypeConverter());
         //TODO, more formatters will be added later
     }
 

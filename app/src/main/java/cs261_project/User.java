@@ -1,8 +1,12 @@
 package cs261_project;
 
+import org.springframework.web.bind.annotation.RequestParam;
+
 /**
  * User class for user information
- * @author Group 12 - Stephen Xu, JuanYan Huo, Ellen Tatum, JiaQi Lv, Alexander Odewale
+ * 
+ * @author Group 12 - Stephen Xu, JuanYan Huo, Ellen Tatum, JiaQi Lv, Alexander
+ *         Odewale
  */
 public class User {
     //Properties
@@ -16,9 +20,24 @@ public class User {
      */
     public static enum UserType{
         //User who joins event and provide feedback
-        ATTENDEE,
+        ATTENDEE("ATTENDEE"),
         //User who set up the event and listen to feedback
-        HOST
+        HOST("HOST");
+
+        private final String Value;
+
+        private UserType(String literal){
+            this.Value = literal;
+        }
+
+        /**
+         * Convert enum type to string
+         * @return String literal of the type
+         */
+        @Override
+        public String toString(){
+            return this.Value;
+        }
     }
 
     public User(){
