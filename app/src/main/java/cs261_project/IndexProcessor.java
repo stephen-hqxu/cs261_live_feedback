@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ServerWebInputException;
 
+import cs261_project.User.UserType;
+
 /**
  * Handle general web page requests such as login and registrations
  * @author Group 12 - Stephen Xu, JuanYan Huo, Ellen Tatum, JiaQi Lv, Alexander Odewale
@@ -41,11 +43,12 @@ public class IndexProcessor {
     }
 
     @PostMapping("/login")
-    public final String handleLogin(@RequestParam() Map<String, String> args, User user) throws ServerWebInputException {
-        if(!args.get("selection").equals("login")){
+    public final String handleLogin(@RequestParam("selection") String selection, User user, @RequestParam("usertype") UserType type) throws ServerWebInputException {
+        if(!selection.equals("login")){
             //error handling, normally it won't trigger
             throw new ServerWebInputException("Only login can be selected");
         }
+        user.setUserType(type);
 
         //TODO processing login
 
@@ -58,9 +61,9 @@ public class IndexProcessor {
     }
 
     @PostMapping("/register")
-    public final String handleRegister(User user){
-        
-        //TODO writing enum converter
+    public final String handleRegister(User user, @RequestParam("usertype") UserType type){
+        user.setUserType(type);
+
         //TODO processing register
 
         return "redirect:/login";
