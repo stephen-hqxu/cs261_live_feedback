@@ -8,7 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.server.ServerWebInputException;
 
 /**
@@ -42,14 +41,11 @@ public class IndexProcessor {
     }
 
     @PostMapping("/login")
-    public final String handleLogin(@RequestParam() Map<String, String> args) throws ServerWebInputException {
+    public final String handleLogin(@RequestParam() Map<String, String> args, User user) throws ServerWebInputException {
         if(!args.get("selection").equals("login")){
             //error handling, normally it won't trigger
             throw new ServerWebInputException("Only login can be selected");
         }
-        //read the username and password
-        final String username = args.get("username");
-        final String password = args.get("password");
 
         //TODO processing login
 
@@ -59,6 +55,15 @@ public class IndexProcessor {
     @GetMapping("/register")
     public final String serveRegister(){
         return "register";
+    }
+
+    @PostMapping("/register")
+    public final String handleRegister(User user){
+        
+        //TODO writing enum converter
+        //TODO processing register
+
+        return "redirect:/login";
     }
 
     @GetMapping("/joinEvent")
