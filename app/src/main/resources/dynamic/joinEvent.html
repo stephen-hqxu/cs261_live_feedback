@@ -2,15 +2,37 @@
 <html lang="en"></html>
 <head>
     <div th:replace="../static/heading.html"></div>
-    <title>Join Event</title>
+    <title>Join an event</title>
 </head>
 <body>
 
-<div class="w3-container w3-center w3-large">
-    <div>
-        <h1> Join an event </h1>
+    <div class="w3-container w3-center w3-large w3-indigo">
+        <div>
+            <h1> Join an event </h1>
+        </div>
     </div>
-</div>
+
+    <form class="w3-container w3-center" method="POST" action="joinEvent">
+
+        <label for="eventCode" class="w3-text-blue"><b>Enter an event code</b></label><br>
+        <input type="text" class="w3-input w3-border w3-light-grey w3-center" placeholder="Event code" name="eventCode" id="eventCode" required><br>
+
+        <label for="eventPassword" class="w3-text-blue"><b>Enter the event password</b></label><br>
+        <input type="text" class="w3-input w3-border w3-light-grey w3-center" placeholder="Event password" name="eventPassword" id="eventPassword" required><br>
+
+        <button type="submit" class="w3-btn w3-blue w3-round-xxlarge w3-padding" style="width:50%">Join</button>
+
+    </form>
+
+    <br>
+
+    <form class="w3-container w3-center" method="GET" action="/">
+
+        <button type="submit" class="w3-btn w3-blue w3-round-xxlarge w3-padding" style="width:50%">Back</button>
+
+    </form>
+
+
 
 </body>
 </html>
