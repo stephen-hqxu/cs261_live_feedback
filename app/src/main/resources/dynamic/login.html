@@ -2,7 +2,6 @@
 <html lang="en"></html>
 <head>
     <div th:replace="../static/heading.html"></div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Login</title>
 </head>
 <body>
@@ -32,24 +31,6 @@
         <label class="w3-text-blue"><b>Back</b></label><br>
         <button id="back" class="w3-btn w3-blue w3-round-xxlarge w3-padding " style="width:50%" type="submit">Go back</button> <br><br>
     </form>
-
-
-<!--    <script>-->
-
-<!--        //loading port number using template engine-->
-<!--        var port = "[[${port}]]";-->
-
-<!--        $("#register").click(function(){-->
-<!--            //register page-->
-<!--            $(location).attr('href', 'http://localhost:' + port + '/register');-->
-<!--        });-->
-
-<!--        $("#back").click(function(){-->
-<!--            //Go back to the index page-->
-<!--            $(location).attr('href', 'http://localhost:' + port + '');-->
-<!--        });-->
-
-<!--    </script>-->
 
 </body>
 </html>

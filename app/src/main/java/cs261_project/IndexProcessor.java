@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.server.ServerWebInputException;
+
+import cs261_project.data_structure.*;
 
 /**
  * Handle general web page requests such as login and registrations
@@ -38,13 +39,14 @@ public class IndexProcessor {
     }
 
     @GetMapping("/loginPage")
-    public final String serveLogin(Model model){
-        model.addAttribute("port", this.PORT);
+    public final String serveLogin(){
         return "login";
     }
 
     @PostMapping("/login")
-    public final String handleLogin(HostUser user) throws ServerWebInputException {
+    public final String handleLogin(@RequestParam() Map<String, String> args) {
+        final String username = args.get("username").toString();
+        final String password = args.get("password").toString();
 
         //TODO processing login
 
@@ -75,14 +77,20 @@ public class IndexProcessor {
 
         //TODO render feedback template
 
-        return "/feedbackForm";
+        return "redirect:/feedbackForm";
+    }
 
+    @GetMapping("/feedbackForm")
+    public final String serveFeedbackForm(){
+        return "feedbackForm";
     }
 
     @PostMapping("/submitFeedback")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<String> processFeedback(){
+
         //TODO process feedback, the attendee needs to stay on the feedbackForm webpage
+
         return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
     }
 
@@ -103,13 +111,17 @@ public class IndexProcessor {
 
     @PostMapping("/newEvent")
     public final String handleNewEvent(){
+
         //TODO create new event
-        return "hostHomePage";
+
+        return "redirect:/hostHomePage";
     }
 
     @GetMapping("/viewFeedback")
     public final String serveViewFeedback(){
+
         //TODO view feedback
+
         return "viewFeedbackPage";
     }
 
