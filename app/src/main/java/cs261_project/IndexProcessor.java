@@ -3,22 +3,21 @@ package cs261_project;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-import cs261_project.data_structure.*;
+import cs261_project.data_structure.HostUser;
 
 /**
  * Handle general web page requests such as login and registrations
  * @author Group 12 - Stephen Xu, JuanYan Huo, Ellen Tatum, JiaQi Lv, Alexander Odewale
  */
 @Controller
+@RequestMapping("/")
 public class IndexProcessor {
     //Server port number
     @Value("${server.port}")
@@ -50,7 +49,7 @@ public class IndexProcessor {
 
         //TODO processing login
 
-        return "redirect:/hostHomePage";
+        return "redirect:/host/hostHomePage";
     }
 
     @GetMapping("/registerPage")
@@ -73,56 +72,13 @@ public class IndexProcessor {
 
 
     @PostMapping("/joinEvent")
-    public final String handleJoinEvent() {
+    public final String handleJoinEvent(@RequestParam() Map<String, String> args) {
+        final String eventCode = args.get("eventCode").toString();
+        final String eventPassword = args.get("eventPassword").toString();
 
-        //TODO render feedback template
-
-        return "redirect:/feedbackForm";
-    }
-
-    @GetMapping("/feedbackForm")
-    public final String serveFeedbackForm(){
-        return "feedbackForm";
-    }
-
-    @PostMapping("/submitFeedback")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<String> processFeedback(){
-
-        //TODO process feedback, the attendee needs to stay on the feedbackForm webpage
-
-        return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
-    }
-
-    @GetMapping("/hostHomePage")
-    public final String servehostHomePage(){
-        return "hostHomePage";
-    }
-
-    @GetMapping("/newEventPage")
-    public final String serveCreateEventPage(){
-        return "newEventPage";
-    }
-
-    @GetMapping("/eventsPage")
-    public final String serveEventsPage(){
-        return "eventsPage";
-    }
-
-    @PostMapping("/newEvent")
-    public final String handleNewEvent(){
-
-        //TODO create new event
-
-        return "redirect:/hostHomePage";
-    }
-
-    @GetMapping("/viewFeedback")
-    public final String serveViewFeedback(){
-
-        //TODO view feedback
-
-        return "viewFeedbackPage";
+        //TODO fetch event info, template will be rendered in the form.
+        
+        return "redirect:/attendee/feedbackForm";
     }
 
 }
