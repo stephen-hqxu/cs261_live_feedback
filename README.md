@@ -14,12 +14,20 @@ gradlew.bat run
 - Mac/Linux:
 
 ```sh
-gradlew run
+./gradlew run
 ```
 
 It may take a minute for a initial setup, once it's done all subsequent builds will be faster.
 
+When the console says "75% executing", the server is ready up, for some reason it won't show "100%".
+
 All dependencies we are using can be found in /app/build.gradle :+1:
+
+## Accessing Webpage
+Open your favourite web browser, type in the address bar:
+```url
+localhost:12345
+```
 
 ## File Structure
 
