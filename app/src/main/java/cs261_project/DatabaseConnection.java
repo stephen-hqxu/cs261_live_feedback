@@ -4,7 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
+import cs261_project.data_structure.Event;
+import cs261_project.data_structure.Feedback;
+import cs261_project.data_structure.HostUser;
+import cs261_project.data_structure.Template;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -28,26 +33,26 @@ public class DatabaseConnection {
         this.source = new JdbcTemplate(DatabaseConfiguration.dataSource());
     }
 
-    // public String greet(){
-    //     //PreparedStatementCreator create sql and arguments at the same time, PreparedStatementSetter only sets arguments
-    //     final String res = this.source.query(new PreparedStatementCreator(){
-    //         @Override
-    //         public PreparedStatement createPreparedStatement(Connection con) throws SQLException{
-    //             PreparedStatement stmt = con.prepareStatement("SELECT Message FROM Greet WHERE MID=?");
-    //             stmt.setString(1, "0");
-    //             return stmt;
-    //         }
-    //     //RowCallbackHandler deals with individual row data, whereas ResultSetExtractor deals with entire result set
-    //     }, new ResultSetExtractor<String>(){
-    //         @Override
-    //         public String extractData(ResultSet rs) throws SQLException, DataAccessException{
-    //             rs.next();
-    //             final String val = rs.getString(1);
-    //             rs.close();
-    //             return val;
-    //         }
-    //     });
-    //     return res;
-    // }
+//     public String greet(){
+//         //PreparedStatementCreator create sql and arguments at the same time, PreparedStatementSetter only sets arguments
+//         final String res = this.source.query(new PreparedStatementCreator(){
+//             @Override
+//             public PreparedStatement createPreparedStatement(Connection con) throws SQLException{
+//                 PreparedStatement stmt = con.prepareStatement("SELECT Message FROM Greet WHERE MID=?");
+//                 stmt.setString(1, "0");
+//                 return stmt;
+//             }
+//         //RowCallbackHandler deals with individual row data, whereas ResultSetExtractor deals with entire result set
+//         }, new ResultSetExtractor<String>(){
+//             @Override
+//             public String extractData(ResultSet rs) throws SQLException, DataAccessException{
+//                 rs.next();
+//                 final String val = rs.getString(1);
+//                 rs.close();
+//                 return val;
+//             }
+//         });
+//         return res;
+//     }
 
 }
