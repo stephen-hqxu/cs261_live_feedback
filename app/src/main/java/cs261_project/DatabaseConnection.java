@@ -13,8 +13,10 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
+import cs261_project.data_structure.*;
 import cs261_project.config.DatabaseConfiguration;
-import jdk.internal.event.Event;
+// import jdk.internal.event.Event;
+import cs261_project.IDatabaseConnection;
 
 /**
  * Handle data communication between the database
@@ -31,40 +33,40 @@ public class DatabaseConnection implements IDatabaseConnection {
         this.source = new JdbcTemplate(DatabaseConfiguration.dataSource());
     }
 
-    public String greet(){
-        //PreparedStatementCreator create sql and arguments at the same time, PreparedStatementSetter only sets arguments
-        final String res = this.source.query(new PreparedStatementCreator(){
-            @Override
-            public PreparedStatement createPreparedStatement(Connection con) throws SQLException{
-                PreparedStatement stmt = con.prepareStatement("SELECT Message FROM Greet WHERE MID=?");
-                stmt.setString(1, "0");
-                return stmt;
-            }
-            //RowCallbackHandler deals with individual row data, whereas ResultSetExtractor deals with entire result set
-        }, new ResultSetExtractor<String>(){
-            @Override
-            public String extractData(ResultSet rs) throws SQLException, DataAccessException{
-                rs.next();
-                final String val = rs.getString(1);
-                rs.close();
-                return val;
-            }
-        });
-        return res;
-    }
+    // public String greet(){
+    //     //PreparedStatementCreator create sql and arguments at the same time, PreparedStatementSetter only sets arguments
+    //     final String res = this.source.query(new PreparedStatementCreator(){
+    //         @Override
+    //         public PreparedStatement createPreparedStatement(Connection con) throws SQLException{
+    //             PreparedStatement stmt = con.prepareStatement("SELECT Message FROM Greet WHERE MID=?");
+    //             stmt.setString(1, "0");
+    //             return stmt;
+    //         }
+    //         //RowCallbackHandler deals with individual row data, whereas ResultSetExtractor deals with entire result set
+    //     }, new ResultSetExtractor<String>(){
+    //         @Override
+    //         public String extractData(ResultSet rs) throws SQLException, DataAccessException{
+    //             rs.next();
+    //             final String val = rs.getString(1);
+    //             rs.close();
+    //             return val;
+    //         }
+    //     });
+    //     return res;
+    // }
 
-    public HostUser AuthenticateHost(String username, String password){
-        String sql = "SELECT * FROM Users WHERE UserName = ? and Password = ?";
+    // public HostUser AuthenticateHost(String username, String password){
+    //     String sql = "SELECT * FROM Users WHERE UserName = ? and Password = ?";
 
-        return source.queryForObject(sql, new Object[]{username}, new Object[]{password}, (rs, rowNum) ->
-                new HostUser(
-                        rs.getInt("HID"),
-                        rs.getString("FirstName"),
-                        rs.getString("LastName"),
-                        rs.getString("UserName"),
-                        rs.getString("Password")
-                ));
-    }
+    //     return source.queryForObject(sql, new Object[]{username}, new Object[]{password}, (rs, rowNum) ->
+    //             new HostUser(
+    //                     rs.getInt("HID"),
+    //                     rs.getString("FirstName"),
+    //                     rs.getString("LastName"),
+    //                     rs.getString("UserName"),
+    //                     rs.getString("Password")
+    //             ));
+    // }
 
     /**
      * Register a new account for an event host. This will put new data to the database.
@@ -76,15 +78,15 @@ public class DatabaseConnection implements IDatabaseConnection {
     public boolean RegisterHost(HostUser host){
         source.update(
                 "INSERT INTO Users (UserName, Password, FirstName, LastName) VALUES (?, ?, ?, ?)",
-                var1, var2, var3, var4
+                host.getUsername(), host.getPassword(), host.getFirstname(), host.getLastname()
         );
         String sql = "SELECT COUNT(UserName) AS UN FROM Users WHERE UserName = ?";
 
-        if (source.queryForObject(sql, new Object[] { host.user }, Long.class)==0)
+        if (source.queryForObject(sql, new Object[] { host.getUsername() }, Long.class)==0)
         {
             source.update(
                     "INSERT INTO Users (UserName, Password, FirstName, LastName) VALUES (?, ?, ?, ?)",
-                    var1, var2, var3, var4
+                    host.getUsername(), host.getPassword(), host.getFirstname(), host.getLastname()
             );
             return true;
         }
@@ -118,10 +120,10 @@ public class DatabaseConnection implements IDatabaseConnection {
      * @return An arraylist of event objects, each event object needs to be filled with data from the database similar to LookupEvent() function.
      * If host ID cannot be found, or there is no event associated with the host, return null.
      */
-    public Event[] fetchEvents(int hostID){
+    public ArrayList<Event> fetchEvents(int hostID){
         String sql = "SELECT * FROM Events WHERE HostID = hostID";
         
-        ArrayList<Events> events = new ArrayList<Events>();
+        ArrayList<Event> events = new ArrayList<Event>();
 
         
 
