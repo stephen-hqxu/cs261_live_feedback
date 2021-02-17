@@ -1,10 +1,11 @@
 package cs261_project;
 
 import cs261_project.data_structure.*;
+import java.util.ArrayList;
 
 /**
  * Handle data communication between the database. This is the header.
- * @author Group 12 - Stephen Xu, JuanYan Huo, Ellen Tatum, JiaQi Lv, Alexander Odewale
+ * @author Group 12 - Stephen Xu, JunYan Huo, Ellen Tatum, JiaQi Lv, Alexander Odewale
  */
 public interface IDatabaseConnection {
 
@@ -52,7 +53,7 @@ public interface IDatabaseConnection {
      * @return An array of event objects, each event object needs to be filled with data from the database similar to LookupEvent() function.
      * If host ID cannot be found, or there is no event associated with the host, return null.
      */
-    public abstract Event[] fetchEvents(int hostID);
+    public abstract ArrayList<Event> fetchEvents(int hostID);
 
     /**
      * Create a new event. This will write new data to the database.
