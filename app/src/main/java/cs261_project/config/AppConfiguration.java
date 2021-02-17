@@ -108,7 +108,7 @@ public class AppConfiguration implements WebMvcConfigurer, ApplicationContextAwa
         ResourceHttpRequestHandler requestHandler
                 = new ResourceHttpRequestHandler();
         ClassPathResource classPathResource
-                = new ClassPathResource("com/baeldung/images/");
+                = new ClassPathResource("../resources/static");
         List<Resource> locations = Arrays.asList(classPathResource);
         requestHandler.setLocations(locations);
         return requestHandler;
