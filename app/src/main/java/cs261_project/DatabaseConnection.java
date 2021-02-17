@@ -2,21 +2,13 @@ package cs261_project;
 
 import java.util.ArrayList;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowCallbackHandler;
 
 import cs261_project.data_structure.*;
 import cs261_project.config.DatabaseConfiguration;
-// import jdk.internal.event.Event;
-import cs261_project.IDatabaseConnection;
 
 /**
  * Handle data communication between the database
@@ -24,6 +16,7 @@ import cs261_project.IDatabaseConnection;
  */
 public class DatabaseConnection implements IDatabaseConnection {
     //Database instance
+    @Autowired
     private JdbcTemplate source;
 
     //Don't worry about intuitive error handling such as empty username etc., JiaQi has handled all errors in the webpage.
@@ -54,142 +47,80 @@ public class DatabaseConnection implements IDatabaseConnection {
     //     });
     //     return res;
     // }
-
-    // public HostUser AuthenticateHost(String username, String password){
-    //     String sql = "SELECT * FROM Users WHERE UserName = ? and Password = ?";
-
-    //     return source.queryForObject(sql, new Object[]{username}, new Object[]{password}, (rs, rowNum) ->
-    //             new HostUser(
-    //                     rs.getInt("HID"),
-    //                     rs.getString("FirstName"),
-    //                     rs.getString("LastName"),
-    //                     rs.getString("UserName"),
-    //                     rs.getString("Password")
-    //             ));
-    // }
-
-    /**
-     * Register a new account for an event host. This will put new data to the database.
-     * @see HostUser
-     * @param host The host user data
-     * @return True if new host account has been pushed to database.
-     * If duplicated username has found, do not register and return false.
-     */
-    public boolean RegisterHost(HostUser host){
-        source.update(
-                "INSERT INTO Users (UserName, Password, FirstName, LastName) VALUES (?, ?, ?, ?)",
-                host.getUsername(), host.getPassword(), host.getFirstname(), host.getLastname()
-        );
-        String sql = "SELECT COUNT(UserName) AS UN FROM Users WHERE UserName = ?";
-
-        if (source.queryForObject(sql, new Object[] { host.getUsername() }, Long.class)==0)
-        {
-            source.update(
-                    "INSERT INTO Users (UserName, Password, FirstName, LastName) VALUES (?, ?, ?, ?)",
-                    host.getUsername(), host.getPassword(), host.getFirstname(), host.getLastname()
-            );
-            return true;
+    
+    @Override
+    public HostUser AuthenticateHost(String username, String password){
+        final String sql = "SELECT * FROM Users WHERE UserName = ? AND Password = ?";
+        
+        //variadic template function
+        try{
+            return this.source.queryForObject(sql, HostUser.getHostUserRowMapper(), username, password);
+        }catch(EmptyResultDataAccessException erdae){
+            //username or password is incorrect
+            return null;
         }
-        else
-            return false;
-
-        return true;
     }
 
-    /**
-     * Lookup an event. This will fetch data from the database. This will be mainly used by attendee to join the event.
-     * Similar to host login, function should check for event code and event password, and read data if and only if both are correct.
-     * Fetch all information of the event from the database and format the into Event object.
-     * This is mainly used for attendees to join an event.
-     * @see Event
-     * @param eventcode The event code, also known as event ID (EID in the database schema).
-     * @param eventPassword The event password.
-     * @return The event object if event code and event password are both matched.
-     * It needs to contain event code (or event ID), host ID that the event belongs to, event name, event password, event start and finish time
-     * Note that to convert string literal to LocalDateTime object in the event class, use Event.StringToTempo() function.
-     * If event code or event password are incorrect, return null.
-     */
-    public Event LookupEvent(String eventcode, String eventPassword){
+    @Override
+    public boolean RegisterHost(HostUser host){
+        final String sql = "INSERT INTO Users (UserName, Password, FirstName, LastName) VALUES (?, ?, ?, ?)";
+        
+        try{
+            //if row has been updated, user has been registered
+            return this.source.update(
+                sql,
+                host.getUsername(), host.getPassword(), host.getFirstname(), host.getLastname()
+            ) >= 1;
+        }catch(DataAccessException dae){
+            //username duplicating violation will be catched here
+            return false;
+        }
         
     }
 
-    /**
-     * Fetch all events with a given host ID, for whom the events belong to. This will be used by event host to see all created events.
-     * @see Event
-     * @param hostID The host ID to lookup.
-     * @return An arraylist of event objects, each event object needs to be filled with data from the database similar to LookupEvent() function.
-     * If host ID cannot be found, or there is no event associated with the host, return null.
-     */
+    @Override
+    public Event LookupEvent(String eventcode, String eventPassword){
+        final String sql = "SELECT * FROM Events WHERE EID = ? AND EventPassword = ?";
+        
+        try{
+            return this.source.queryForObject(sql, Event.getEventRowMapper(), eventcode, eventPassword);
+        }catch(EmptyResultDataAccessException erdae){
+            return null;
+        }
+    }
+
+    @Override
     public ArrayList<Event> fetchEvents(int hostID){
-        String sql = "SELECT * FROM Events WHERE HostID = hostID";
+        final String sql = "SELECT * FROM Events WHERE HostID = ?";
         
         ArrayList<Event> events = new ArrayList<Event>();
-
-        
-
 
         return events;
     }
 
-    /**
-     * Create a new event. This will write new data to the database.
-     * Note that to convert LocalDateTime object in the event class to string literal for database, use Event.TempoToString() function.
-     * @see Event
-     * @param event The event data
-     * @return True if event has been created in the database.
-     * Currently there is no other considerations for the case when an event shouldn't be created (feel free to add). So function always return true.
-     */
+    @Override
     public boolean newEvent(Event event){
-
+        return true;
     }
 
-    /**
-     * Fetch all feedbacks with a given event ID for the event host, for which the feedbacks belong to.
-     * @see Feedback
-     * @param eventID The event ID to lookup.
-     * @return An arraylist of feedback objects, each one needs to be formatted into Feedback object.
-     * Feedback object contains feedback ID (FID), event ID that the feedback belongs to, attendee name which is optional and nullable, feedback contents,
-     * mood, optional template answers and optional additional information.
-     * If no feedback can be found with the event ID, or there is currently no feedback for this event, return null.
-     */
+    @Override
     public Feedback[] fetchFeedbacks(int eventID){
-
+        return null;
     }
 
-    /**
-     * Submit feedback from an attendee to the database.
-     * @see Feedback
-     * @param feedback The feedback object with the information to submit
-     * @return True if feedback has been submitted.
-     * Currently there is no other considerations for the case when feedback shouldn't be submitted (feel free to add). So function always return true.
-     */
+    @Override
     public boolean submitFeedback(Feedback feedback){
-
+        return true;
     }
-
-    /**
-     * Fetch template for a given event ID. Each event can only have one template.
-     * @see Template
-     * @param eventID The event ID to lookup.
-     * @return The template for such event. All data will be formatted and store into the template object.
-     * Template object will contain template ID (TID in database), event id and template questions.
-     * If no template can be found with the given event ID, return null.
-     */
+    
+    @Override
     public Template fetchTemplate(int eventID){
-
+        return null;
     }
 
-    /**
-     * Create a new template for an event.
-     * @see Template
-     * @param template The template object with information to the new template.
-     * @return True if the template has been created.
-     * If event ID is duplicated, return false and template shouldn't be inserted into the table.
-     * Also event ID in the database schema is a candidate key.
-     */
+    @Override
     public boolean createTemplate(Template template){
-
+        return true;
     }
-
 
 }

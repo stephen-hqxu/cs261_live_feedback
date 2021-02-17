@@ -2,6 +2,8 @@ package cs261_project;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,13 +42,12 @@ public final class HostProcessor {
     @PostMapping("/newEvent")
     public final String handleNewEvent(Event event, @RequestParam() Map<String, String> args){
         //parsing datetime
-        //TODO wrong datetime format, since HTML doesn't allow formatting, have to change from Java, will be modified after DatabaseConnection is implemented.
         //start
-        String datetime = args.get("startDate").toString() + " " + args.get("startTime").toString() + ":00";
-        //event.setStartDateTime(Event.StringToTempo(datetime));
+        String datetime = args.get("startDate").toString() + " " + args.get("startTime").toString();
+        event.setStartDateTime(Event.StringToTempo(datetime));
         //finish
-        datetime = args.get("endDate").toString() + " " + args.get("endTime").toString() + ":00";
-        //event.setStartDateTime(Event.StringToTempo(datetime));
+        datetime = args.get("endDate").toString() + " " + args.get("endTime").toString();
+        event.setStartDateTime(Event.StringToTempo(datetime));
 
         //TODO Attendee number is forgotten in the database schema, will be added after DatabaseConnection is implemented
         //TODO create new event
@@ -62,4 +63,11 @@ public final class HostProcessor {
         return "viewFeedbackPage";
     }
 
+    @PostMapping("/signout")
+    public final String handleSignout(HttpServletRequest request){
+        //delete the host session
+        request.removeAttribute("HostID");
+        
+        return "redirect:/loginPage";
+    }
 }

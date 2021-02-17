@@ -52,4 +52,5 @@ localhost:12345
 | ------------ | ------------ |
 | cs261-project | Main server codes |
 | cs261-project.config | Server configurations |
-| cs261-project.dialect | Codes for porting SQLite to Spring
+| cs261-project.dialect | Codes for porting SQLite to Spring |
+| cs261-project.data_structure | Data structure for database instances |

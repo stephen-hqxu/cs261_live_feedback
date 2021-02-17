@@ -18,6 +18,7 @@ CREATE TABLE Events(
     EventPassword VARCHAR(20) NOT NULL,
     StartTime DATETIME NOT NULL,
     FinishTime DATETIME NOT NULL,
+    EstimatedAttendeeNumber INTEGER NOT NULL,
     FOREIGN KEY(HostID) REFERENCES Users(HID)
 );
 

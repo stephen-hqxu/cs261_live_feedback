@@ -11,6 +11,7 @@ public class Feedback {
     private int ID;
     private int BelongsTo;
     private @Nullable String Name;
+    private String Feedback;
     private byte Mood;
     private @Nullable String TemplateAnswer;//TODO I will structure JSON into an object later
     private @Nullable String AdditionalInfo;
@@ -27,8 +28,12 @@ public class Feedback {
         this.BelongsTo = event_id;
     }
 
-    public void setEventName(@Nullable String eventname){
-        this.Name = eventname;
+    public void setAttendeeName(@Nullable String attendeename){
+        this.Name = attendeename;
+    }
+
+    public void setFeedback(String feedback){
+        this.Feedback = feedback;
     }
 
     public void setMood(byte mood){
@@ -53,8 +58,12 @@ public class Feedback {
         return this.BelongsTo;
     }
 
-    public @Nullable String getEventName(){
+    public @Nullable String getAttendeeName(){
         return this.Name;
+    }
+
+    public String getFeedback(){
+        return this.Feedback;
     }
 
     public byte getMood(){

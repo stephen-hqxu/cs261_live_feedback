@@ -2,6 +2,8 @@ package cs261_project;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,11 +45,23 @@ public class IndexProcessor {
     }
 
     @PostMapping("/login")
-    public final String handleLogin(@RequestParam() Map<String, String> args) {
+    public final String handleLogin(@RequestParam() Map<String, String> args, HttpServletRequest request) {
+        final IDatabaseConnection db = App.getInstance().getDbConnection();
         final String username = args.get("username").toString();
         final String password = args.get("password").toString();
 
-        //TODO processing login
+        final HostUser user = db.AuthenticateHost(username, password);
+
+        //if username or password are incorrect
+        if(user == null){
+            //TODO pop-up some message box to inform user
+            return "redirect:/loginPage";
+        }
+        //set user id as session variable
+        request.setAttribute("HostID", user.getUserID());
+
+        //The general strategy is, fetch user data from database using the host id
+        //we can also pass some arguments to hostHomePage for initial display, for example firstname lastname etc.
 
         return "redirect:/host/hostHomePage";
     }
@@ -59,8 +73,10 @@ public class IndexProcessor {
 
     @PostMapping("/register")
     public final String handleRegister(HostUser user){
+        final IDatabaseConnection db = App.getInstance().getDbConnection();
 
-        //TODO processing register
+        final boolean status = db.RegisterHost(user);
+        //TODO: tell user to change their username (duplicate found) if status is false
 
         return "redirect:/loginPage";
     }

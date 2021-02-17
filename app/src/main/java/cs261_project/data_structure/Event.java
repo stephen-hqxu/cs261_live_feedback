@@ -1,7 +1,11 @@
 package cs261_project.data_structure;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
+import org.springframework.jdbc.core.RowMapper;
 
 /**
  * Event class for a event data
@@ -15,9 +19,26 @@ public class Event {
     private String Password;
     private LocalDateTime Start;
     private LocalDateTime Finish;
+    private int Estimated;
 
+    private final static RowMapper<Event> Mapper = new RowMapper<Event>(){
+        @Override
+        public Event mapRow(ResultSet rs, int rowNum) throws SQLException{
+            Event event = new Event();
+
+            event.ID = rs.getInt("EID");
+            event.BelongsTo = rs.getInt("HostID");
+            event.Name = rs.getString("EventName");
+            event.Password = rs.getString("EventPassword");
+            event.Start = Event.StringToTempo(rs.getString("StartTime"));
+            event.Finish = Event.StringToTempo(rs.getString("FinishTime"));
+            event.Estimated = rs.getInt("EstimatedAttendeeNumber");
+
+            return event;
+        }
+    };
     //Our special event time formatter
-    private final static DateTimeFormatter EVENTDATETIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+    private final static DateTimeFormatter EVENTDATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     
     public Event(){
 
@@ -67,7 +88,15 @@ public class Event {
         this.Finish = finish;
     }
 
+    public void setEstimatedAttendeeNumber(int estimated){
+        this.Estimated = estimated;
+    }
+
     //-----------------------------------------------//
+
+    public static final RowMapper<Event> getEventRowMapper(){
+        return Event.Mapper;
+    }
 
     public int getEventID(){
         return this.ID;
@@ -91,6 +120,10 @@ public class Event {
 
     public LocalDateTime getFinishDateTime(){
         return this.Finish;
+    }
+
+    public int getEstimatedAttendeeNumber(){
+        return this.Estimated;
     }
 
 }
