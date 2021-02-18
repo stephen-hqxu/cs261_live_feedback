@@ -1,19 +1,16 @@
 package cs261_project;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import cs261_project.config.DatabaseConfiguration;
+import cs261_project.data_structure.Event;
+import cs261_project.data_structure.Feedback;
+import cs261_project.data_structure.HostUser;
+import cs261_project.data_structure.Template;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import org.springframework.jdbc.core.RowMapper;
-
-import cs261_project.data_structure.*;
-import cs261_project.config.DatabaseConfiguration;
+import java.util.ArrayList;
 
 /**
  * Handle data communication between the database
