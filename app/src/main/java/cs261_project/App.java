@@ -18,7 +18,7 @@ public class App {
     //app context
     private ConfigurableApplicationContext context;
     //database connection
-    private IDatabaseConnection db;
+    private DatabaseConnection db;
 
     public App(){
 
@@ -58,7 +58,7 @@ public class App {
      * Get application database connection
      * @return The database connection
      */
-    public final IDatabaseConnection getDbConnection(){
+    public final DatabaseConnection getDbConnection(){
         return this.db;
     }
 

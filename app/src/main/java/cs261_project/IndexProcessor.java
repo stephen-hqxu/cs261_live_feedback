@@ -46,7 +46,7 @@ public class IndexProcessor {
 
     @PostMapping("/login")
     public final String handleLogin(@RequestParam() Map<String, String> args, HttpServletRequest request) {
-        final IDatabaseConnection db = App.getInstance().getDbConnection();
+        final DatabaseConnection db = App.getInstance().getDbConnection();
         final String username = args.get("username").toString();
         final String password = args.get("password").toString();
 
@@ -73,7 +73,7 @@ public class IndexProcessor {
 
     @PostMapping("/register")
     public final String handleRegister(HostUser user){
-        final IDatabaseConnection db = App.getInstance().getDbConnection();
+        final DatabaseConnection db = App.getInstance().getDbConnection();
 
         final boolean status = db.RegisterHost(user);
         //TODO: tell user to change their username (duplicate found) if status is false
