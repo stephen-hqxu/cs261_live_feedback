@@ -104,7 +104,7 @@ public class DatabaseConnection implements IDatabaseConnection {
         }catch(EmptyResultDataAccessException erdae){
             return null;
         }
-        return events;
+        // return events;
     }
 
     @Override
@@ -131,11 +131,12 @@ public class DatabaseConnection implements IDatabaseConnection {
 
         try{
             return this.source.queryForObject(sql, Feedback.getFeedbackRowMapper(), eventID);
-        }catch(EmptyResultDataAccessException erdae){
+        }
+        catch(EmptyResultDataAccessException erdae){
             return null;
         }
 
-        return feedback;
+        // return feedback;
     }
 
     @Override
