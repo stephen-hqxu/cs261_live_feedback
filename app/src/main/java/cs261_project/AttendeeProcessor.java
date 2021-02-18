@@ -1,16 +1,17 @@
 package cs261_project;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import cs261_project.data_structure.Feedback;
+import cs261_project.data_structure.*;
 
 /**
  * Process group joining, template fetching and feedback submission for clients
@@ -25,7 +26,19 @@ public final class AttendeeProcessor {
     }
 
     @GetMapping("/feedbackForm")
-    public final String serveFeedbackForm(){
+    public final String serveFeedbackForm(HttpSession session, Model model){
+        final Object eventid = session.getAttribute("EventID");
+        //if no active event has found
+        if(eventid == null){
+            return "redirect:/joinEventPage";
+        }
+
+        final DatabaseConnection db = App.getInstance().getDbConnection();
+        //fetch event
+        final Event event = db.LookupEvent(Integer.parseInt(eventid.toString()));
+        //render event details and display
+        model.addAttribute("eventCode", event.getEventID());
+        model.addAttribute("eventName", event.getEventName());
 
         //TODO render feedback template
 
@@ -43,9 +56,10 @@ public final class AttendeeProcessor {
     }
 
     @PostMapping("/leaveEvent")
-    public final String handleLeaveEvent(HttpServletRequest request){
+    public final String handleLeaveEvent(HttpSession session){
         //remove event session id
-        request.removeAttribute("EventID");
+        session.removeAttribute("EventID");
+        session.invalidate();
 
         return "redirect:/joinEventPage";
     }

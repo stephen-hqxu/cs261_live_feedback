@@ -3,7 +3,6 @@ package cs261_project.data_structure;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.lang.Nullable;
 /**
  * Templates are custom questions from event host.
  * @author Group 12 - Stephen Xu, JunYan Huo, Ellen Tatum, JiaQi Lv, Alexander Odewale

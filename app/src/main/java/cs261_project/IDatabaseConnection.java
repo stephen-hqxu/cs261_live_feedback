@@ -2,7 +2,6 @@ package cs261_project;
 
 import cs261_project.data_structure.*;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Handle data communication between the database. This is the header.
@@ -22,6 +21,13 @@ public interface IDatabaseConnection {
      * Also username in the database schema is a candidate key.
      */
     public abstract HostUser AuthenticateHost(String username, String password);
+
+    /**
+     * Lookup host user by their user id
+     * @param hostid Host user id
+     * @return The host user object
+     */
+    public abstract HostUser LookupHost(int hostid);
 
     /**
      * Register a new account for an event host. This will put new data to the database.
@@ -46,6 +52,13 @@ public interface IDatabaseConnection {
      * If event code or event password are incorrect, return null.
      */
     public abstract Event LookupEvent(String eventcode, String eventPassword);
+
+    /**
+     * Look up event by its event id
+     * @param eventid The event id
+     * @return The event object
+     */
+    public abstract Event LookupEvent(int eventid);
 
     /**
      * Fetch all events with a given host ID, for whom the events belong to. This will be used by event host to see all created events.

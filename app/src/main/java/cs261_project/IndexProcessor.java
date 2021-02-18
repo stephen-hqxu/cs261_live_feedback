@@ -3,6 +3,7 @@ package cs261_project;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -45,7 +46,7 @@ public class IndexProcessor {
     }
 
     @PostMapping("/login")
-    public final String handleLogin(@RequestParam() Map<String, String> args, HttpServletRequest request, Model model) {
+    public final String handleLogin(@RequestParam() Map<String, String> args, HttpServletRequest request, HttpSession session, Model model) {
         final DatabaseConnection db = App.getInstance().getDbConnection();
         final String username = args.get("username").toString();
         final String password = args.get("password").toString();
@@ -57,9 +58,11 @@ public class IndexProcessor {
             model.addAttribute("error", "Either username or password is incorrect, please correct that.");
             return "login";
         }
+        //create a new session
+        session = request.getSession();
         //set user id as session variable
-        request.setAttribute("HostID", user.getUserID());
-
+        session.setAttribute("HostID", user.getUserID());
+       
         //The general strategy is, fetch user data from database using the host id
         //we can also pass some arguments to hostHomePage for initial display, for example firstname lastname etc.
 
@@ -92,7 +95,7 @@ public class IndexProcessor {
 
 
     @PostMapping("/joinEvent")
-    public final String handleJoinEvent(@RequestParam() Map<String, String> args, Model model, HttpServletRequest request) {
+    public final String handleJoinEvent(@RequestParam() Map<String, String> args, Model model, HttpServletRequest request, HttpSession session) {
         final DatabaseConnection db = App.getInstance().getDbConnection();
         final String eventCode = args.get("eventCode").toString();
         final String eventPassword = args.get("eventPassword").toString();
@@ -103,8 +106,10 @@ public class IndexProcessor {
             model.addAttribute("error", "Either event code or event password is incorrect, please fix your input :(");
             return "joinEvent";
         }
+        //create a session
+        session = request.getSession();
         //set event id as attendee session
-        request.setAttribute("EventID", event.getEventID());
+        session.setAttribute("EventID", event.getEventID());
         
         return "redirect:/attendee/feedbackForm";
     }

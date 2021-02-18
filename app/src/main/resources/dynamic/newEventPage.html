@@ -32,19 +32,26 @@
         <input type="text" class="w3-input w3-border w3-light-grey w3-center" name="eventPassword" id="password" required><br>
 
         <label for="attendeesNum" class="w3-text-blue"><b>Estimated number of attendees:</b></label><br>
-        <input type="number" class="w3-input w3-border w3-light-grey w3-center" step="1" min="1" name="attendeesNum" id="attendeesNum" required><br>
+        <input type="number" class="w3-input w3-border w3-light-grey w3-center" step="1" min="1" name="estimatedAttendeeNumber" id="estimatedAttendeeNumber" required><br>
 
         <button type="submit" class="w3-btn w3-blue w3-round-xxlarge w3-padding" style="width:50%" onclick="submitMessage()">Create</button>
     </form>
 
     <br>
 
+    <!-- Put the div into a form so every customised fields will be posted -->
     <div class="w3-container w3-center">
         <label class="w3-text-blue"><b>You can also add customised attributes for attendees to rate on a scale of 1 to 10, with 10 being the best:</b></label><br>
-        <div id="attributes"></div>
+        <!-- Please style the attribute thingy -->
+        <!-- This item will be duplicated by JS -->
+        <div id="attributes_x" class="template_attributes" style="display:none;">
+            <label id="QxLabel" class="w3-text-blue"><b>Question x:</b></label><br>
+            <!-- Find a better place to put the delete button, it's too big -->
+            <button id="del_attr_x" class="w3-btn w3-blue w3-round-xxlarge w3-padding" onclick='remove_attr(x);'>- Remove this attribute -</button>
+            <input type="text" class="w3-input w3-border w3-light-grey w3-center" name="QxTitle" id="QxTitle" required><br>
+        </div>
 
-        <button class="w3-btn w3-blue w3-round-xxlarge w3-padding">+ Add an attribute +</button><br><br>
-        <button class="w3-btn w3-blue w3-round-xxlarge w3-padding">- Delete an attribute -</button>
+        <button id="add_attr" class="w3-btn w3-blue w3-round-xxlarge w3-padding">+ Add an attribute +</button><br><br>
     </div>
 
     <br>
@@ -57,12 +64,63 @@
 
     <script>
 
-        const form = document.getElementById('newEventForm');
+        var template_count = 1;
 
-        function submitMessage() {
+        $('#newEventForm').click(function(){
             if (form.checkValidity()) {
-                alert("Feedback submitted");
+                alert("Event created");
             }
+        });
+
+        $('#add_attr').click(function(){
+            //clone attributes
+            var next = $('#attributes_x').clone();
+            next.insertBefore('#attributes_x');
+            next.css("display", "block");
+            next.prop("id", "attributes_" + template_count);
+            //change the class name for attributes div block, to maintain a clean origin copy.
+            next.prop("class", "attributes");
+            //set child props
+            var next_label = next.children('#QxLabel');
+            var next_remove = next.children('#del_attr_x');
+            next_label.prop("id", "Q" + template_count + "Label");
+            next_label.html("Question " + template_count + ":");
+            next.children('#QxTitle').prop("id", "Q" + template_count + "Title");
+            next_remove.prop("id", "del_attr_" + template_count);
+            //update the clicking event
+            next_remove.attr("onclick", "remove_attr(" + template_count + ");");
+
+            template_count++;
+        });
+
+        function remove_attr(attr_index){
+            $('#attributes_' + attr_index).remove();
+            //decrease the index
+            template_count--;
+
+            refresh_attrLabel();
+        }
+
+        //refresh the index displayed on the webpage
+        function refresh_attrLabel(){
+            //we only select class "attributes", but not the "template_attributes"
+            var templates = $('.attributes');
+            //loop through all template elements
+            templates.each(function(i){
+                index = i + 1;
+
+                var curr_label = $(this).children("label");
+                var curr_button = $(this).children("button");
+                var curr_input = $(this).children("input");
+
+                //reset the id with the new index
+                $(this).prop("id", "attributes_" + index);
+                curr_label.html("Question " + index + ":");
+                curr_label.prop("id", "Q" + index + "Label");
+                curr_input.prop("id", "Q" + index + "Title");
+                curr_button.prop("id", "del_attr_" + index);
+                curr_button.attr("onclick", "remove_attr(" + index + ");");
+            });
         }
 
     </script>

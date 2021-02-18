@@ -70,6 +70,18 @@ public class DatabaseConnection implements IDatabaseConnection {
     }
 
     @Override
+    public HostUser LookupHost(int hostid){
+        final String sql = "SELECT * FROM Users WHERE HID = ?";
+
+        try{
+            return this.source.queryForObject(sql, HostUser.getHostUserRowMapper(), hostid);
+        }catch(EmptyResultDataAccessException erdae){
+            //host id not found
+            return null;
+        }
+    }
+
+    @Override
     public boolean RegisterHost(HostUser host){
         final String sql = "INSERT INTO Users (UserName, Password, FirstName, LastName) VALUES (?, ?, ?, ?)";
         
@@ -99,6 +111,18 @@ public class DatabaseConnection implements IDatabaseConnection {
     }
 
     @Override
+    public Event LookupEvent(int eventid){
+        final String sql = "SELECT * FROM Events WHERE EID = ?";
+
+        try{
+            return this.source.queryForObject(sql, Event.getEventRowMapper(), eventid);
+        }catch(EmptyResultDataAccessException erdae){
+            //event id not found
+            return null;
+        }
+    }
+
+    @Override
     public ArrayList<Event> fetchEvents(int hostID){
         final String sql = "SELECT * FROM Events WHERE HostID = ?";
 
@@ -112,13 +136,13 @@ public class DatabaseConnection implements IDatabaseConnection {
 
     @Override
     public boolean newEvent(Event event){
-        final String sql = "INSERT INTO Events (EventName, EventPassword, StartTime, FinishTime, EstimatedAttendeeNumber) VALUES (?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO Events (HostID, EventName, EventPassword, StartTime, FinishTime, EstimatedAttendeeNumber) VALUES (?, ?, ?, ?, ?, ?)";
         
         try{
             //add a new event
             return this.source.update(
                 sql,
-                event.getEventName(), event.getEventPassword(), event.getStartDateTime(), event.getFinishDateTime(), event.getEstimatedAttendeeNumber()
+                event.getHostID(), event.getEventName(), event.getEventPassword(), Event.TempoToString(event.getStartDateTime()), Event.TempoToString(event.getFinishDateTime()), event.getEstimatedAttendeeNumber()
             ) >= 1;
         }catch(DataAccessException dae){        
             return false;
