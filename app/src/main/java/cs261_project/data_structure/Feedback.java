@@ -1,6 +1,8 @@
 package cs261_project.data_structure;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import org.springframework.jdbc.core.RowMapper;
 
 import org.springframework.lang.Nullable;
 
@@ -23,12 +25,12 @@ public class Feedback {
         public Feedback mapRow(ResultSet rs, int rowNum) throws SQLException{
 
             Feedback feedback = new Feedback();
-            //Do not call rs.next(), it's automatically managed
+        
             feedback.ID = rs.getInt("FID");
-            feedback.BelongsTo = rs.getID("EventID");
+            feedback.BelongsTo = rs.getInt("EventID");
             feedback.Name = rs.getString("AttendeeName");
             feedback.Feedback = rs.getString("Feedback");
-            feedback.Mood = rs.getString("Mood");
+            feedback.Mood = rs.getByte("Mood");
             feedback.TemplateAnswer = rs.getString("Answer");
             feedback.AdditionalInfo = rs.getString("Additionals");
 
