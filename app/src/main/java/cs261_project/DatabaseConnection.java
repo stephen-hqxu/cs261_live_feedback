@@ -1,6 +1,7 @@
 package cs261_project;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -97,10 +98,10 @@ public class DatabaseConnection implements IDatabaseConnection {
     public ArrayList<Event> fetchEvents(int hostID){
         final String sql = "SELECT * FROM Events WHERE HostID = ?";
         
-        ArrayList<Event> events = new ArrayList<Event>();
+        // ArrayList<Event> events = new ArrayList<Event>();
 
         try{
-            return this.source.queryForObject(sql, Event.getEventRowMapper(), hostID);
+            return (ArrayList<Event>)this.source.query(sql, Event.getEventRowMapper(), hostID);
         }catch(EmptyResultDataAccessException erdae){
             return null;
         }
@@ -127,10 +128,10 @@ public class DatabaseConnection implements IDatabaseConnection {
     @Override
     public ArrayList<Feedback> fetchFeedbacks(int eventID){
         final String sql = "SELECT * FROM Feedback WHERE EventID = ?";
-        ArrayList<Feedback> feedback = new ArrayList<Feedback>();
+        // ArrayList<Feedback> feedback = new ArrayList<Feedback>();
 
         try{
-            return this.source.queryForObject(sql, Feedback.getFeedbackRowMapper(), eventID);
+            return (ArrayList<Feedback>)this.source.query(sql, Feedback.getFeedbackRowMapper(), eventID);
         }
         catch(EmptyResultDataAccessException erdae){
             return null;
