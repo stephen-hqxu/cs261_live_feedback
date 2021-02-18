@@ -2,7 +2,18 @@
 This is our CS261 project.
 
 ## Getting Started
-Navigate to the project directory where the **gradlew** files are located, then:
+
+First thing first, go to our **Teams Files**, download *data.db*, a clean version of database with schema loaded up, which has already been pinned to the top. 
+
+Then put the this into /app folder.
+
+You only need to do this once, all subsequent commits will no longer have *data.db* included, so everyone can have their own copy of the database without running into merge conflicts.
+
+> :warning: Please inform everyone if *schema.sql* has been changed.
+
+---
+
+Navigate to the project root directory where the **gradlew** files are located, then:
 
 - Windows:
 
