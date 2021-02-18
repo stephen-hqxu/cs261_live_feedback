@@ -95,32 +95,90 @@ public class DatabaseConnection implements IDatabaseConnection {
         
         ArrayList<Event> events = new ArrayList<Event>();
 
+        try{
+            return this.source.queryForObject(sql, Event.getEventRowMapper(), hostID);
+        }catch(EmptyResultDataAccessException erdae){
+            return null;
+        }
         return events;
     }
 
     @Override
     public boolean newEvent(Event event){
+        final String sql = "INSERT INTO Events (EventName, EventPassword, StartTime, FinishTime, EstimatedAttendeeNumber) VALUES (?, ?, ?, ?, ?)";
+        
+        try{
+            //if row has been updated, user has been registered
+            return this.source.update(
+                sql,
+                event.getEventName(), event.getEventPassword(), event.getStartDateTime(), event.getFinishDateTime(), event.getEstimatedAttendeeNumber()
+            ) >= 1;
+        }catch(DataAccessException dae){
+            //username duplicating violation will be catched here           ???????????????
+            return false;
+        }
+
         return true;
     }
 
     @Override
-    public Feedback[] fetchFeedbacks(int eventID){
-        return null;
+    public ArrayList<Feedback> fetchFeedbacks(int eventID){
+        final String sql = "SELECT * FROM Feedback WHERE EventID = ?";
+        ArrayList<Feedback> feedback = new ArrayList<Feedback>();
+
+        try{
+            return this.source.queryForObject(sql, Feedback.getFeedbackRowMapper(), eventID);
+        }catch(EmptyResultDataAccessException erdae){
+            return null;
+        }
+
+        return feedback;
     }
 
     @Override
     public boolean submitFeedback(Feedback feedback){
+        final String sql = "INSERT INTO Feedback (AttendeeName, Feedback, Mood, Answer, Additionals) VALUES (?, ?, ?, ?, ?)";
+        
+        try{
+            //if row has been updated, user has been registered
+            return this.source.update(
+                sql,
+                feedback.getAttendeeName(), feedback.getFeedback(), feedback.getMood(), feedback.getAnswer(), feedback.getAdditionalInfomation()
+            ) >= 1;
+        }catch(DataAccessException dae){
+            //username duplicating violation will be catched here           ???????????????
+            return false;
+        }
+
         return true;
     }
     
     @Override
     public Template fetchTemplate(int eventID){
-        return null;
+
+        final String sql = "SELECT * FROM Template WHERE EventID = ?";
+
+        try{
+            return this.source.queryForObject(sql, Template.getTemplateRowMapper(), eventID);
+        }catch(EmptyResultDataAccessException erdae){
+            return null;
+        }
     }
 
     @Override
     public boolean createTemplate(Template template){
-        return true;
+        final String sql = "INSERT INTO Template (Question) VALUES (?)";
+        
+        try{
+            //if row has been updated, user has been registered
+            return this.source.update(
+                sql,
+                template.getQuestions()
+            ) >= 1;
+        }catch(DataAccessException dae){
+            //username duplicating violation will be catched here
+            return false;
+        }
     }
 
 }
