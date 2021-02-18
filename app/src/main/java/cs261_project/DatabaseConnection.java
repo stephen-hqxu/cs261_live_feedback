@@ -122,7 +122,7 @@ public class DatabaseConnection implements IDatabaseConnection {
             return false;
         }
 
-        return true;
+        //return true;
     }
 
     @Override
@@ -154,7 +154,7 @@ public class DatabaseConnection implements IDatabaseConnection {
             return false;
         }
 
-        return true;
+        //return true;
     }
     
     @Override
