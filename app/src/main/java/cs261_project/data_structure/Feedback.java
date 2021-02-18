@@ -19,8 +19,8 @@ public class Feedback {
     private byte Mood;
     private @Nullable String TemplateAnswer;//TODO I will structure JSON into an object later
     private @Nullable String AdditionalInfo;
-    
-    private static final RowMapper<Feedback> Mapper = new RowMapper<Feedback>(){
+   
+    private final static RowMapper<Feedback> Mapper = new RowMapper<Feedback>(){
         @Override
         public Feedback mapRow(ResultSet rs, int rowNum) throws SQLException{
 
@@ -71,6 +71,10 @@ public class Feedback {
     }
 
     //------------------------------------------------------------------//
+
+    public static final RowMapper<Feedback> getFeedbackRowMapper(){
+        return Feedback.Mapper;
+    }
 
     public int getFeedbackID(){
         return this.ID;
