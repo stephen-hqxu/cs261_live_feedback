@@ -1,10 +1,12 @@
 package cs261_project.data_structure;
 
+import java.sql.ResultSet;
+
 import org.springframework.lang.Nullable;
 
 /**
  * Holding feedback data from an attendee.
- * @author Group 12 - Stephen Xu, JuanYan Huo, Ellen Tatum, JiaQi Lv, Alexander Odewale
+ * @author Group 12 - Stephen Xu, JunYan Huo, Ellen Tatum, JiaQi Lv, Alexander Odewale
  */
 public class Feedback {
     //Variables
@@ -16,6 +18,24 @@ public class Feedback {
     private @Nullable String TemplateAnswer;//TODO I will structure JSON into an object later
     private @Nullable String AdditionalInfo;
     
+    private static final RowMapper<Feedback> Mapper = new RowMapper<Feedback>(){
+        @Override
+        public Feedback mapRow(ResultSet rs, int rowNum) throws SQLException{
+
+            Feedback feedback = new Feedback();
+            //Do not call rs.next(), it's automatically managed
+            feedback.ID = rs.getInt("FID");
+            feedback.BelongsTo = rs.getID("EventID");
+            feedback.Name = rs.getString("AttendeeName");
+            feedback.Feedback = rs.getString("Feedback");
+            feedback.Mood = rs.getString("Mood");
+            feedback.TemplateAnswer = rs.getString("Answer");
+            feedback.AdditionalInfo = rs.getString("Additionals");
+
+            return feedback;
+        }
+    };
+
     public Feedback(){
 
     }
