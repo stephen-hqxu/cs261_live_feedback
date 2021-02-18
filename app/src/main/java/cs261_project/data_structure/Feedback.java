@@ -15,7 +15,7 @@ public class Feedback {
     private int ID;
     private int BelongsTo;
     private @Nullable String Name;
-    private String Feedback;
+    private String FeedbackText;
     private byte Mood;
     private @Nullable String TemplateAnswer;//TODO I will structure JSON into an object later
     private @Nullable String AdditionalInfo;
@@ -29,7 +29,7 @@ public class Feedback {
             feedback.ID = rs.getInt("FID");
             feedback.BelongsTo = rs.getInt("EventID");
             feedback.Name = rs.getString("AttendeeName");
-            feedback.Feedback = rs.getString("Feedback");
+            feedback.FeedbackText = rs.getString("Feedback");
             feedback.Mood = rs.getByte("Mood");
             feedback.TemplateAnswer = rs.getString("Answer");
             feedback.AdditionalInfo = rs.getString("Additionals");
@@ -55,7 +55,7 @@ public class Feedback {
     }
 
     public void setFeedback(String feedback){
-        this.Feedback = feedback;
+        this.FeedbackText = feedback;
     }
 
     public void setMood(byte mood){
@@ -89,7 +89,7 @@ public class Feedback {
     }
 
     public String getFeedback(){
-        return this.Feedback;
+        return this.FeedbackText;
     }
 
     public byte getMood(){
