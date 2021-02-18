@@ -1,5 +1,6 @@
 package cs261_project;
 
+import cs261_project.data_structure.HostUser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -14,10 +15,11 @@ public class DatabaseConnectionTest {
     }
 
     @Test
-    @DisplayName("Should create a new user")
-    @Disabled("Not implemented")
-    public void createNewUser(){
+    @DisplayName("Should authenticate user")
+    public void shouldAuthenticateUser(){
         DatabaseConnection conn = new DatabaseConnection();
+        HostUser user1 = conn.AuthenticateHost("apple","123456");
+        Assertions.assertNotNull(user1);
     }
 
 }
