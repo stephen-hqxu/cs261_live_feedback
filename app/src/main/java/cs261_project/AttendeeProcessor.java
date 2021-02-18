@@ -1,5 +1,7 @@
 package cs261_project;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -38,6 +40,14 @@ public final class AttendeeProcessor {
         //TODO process feedback, the attendee needs to stay on the feedbackForm webpage
 
         return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/leaveEvent")
+    public final String handleLeaveEvent(HttpServletRequest request){
+        //remove event session id
+        request.removeAttribute("EventID");
+
+        return "redirect:/joinEventPage";
     }
 
 }

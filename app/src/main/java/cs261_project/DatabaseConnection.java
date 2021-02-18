@@ -21,8 +21,6 @@ public class DatabaseConnection implements IDatabaseConnection {
     @Autowired
     private JdbcTemplate source;
 
-    //Don't worry about intuitive error handling such as empty username etc., JiaQi has handled all errors in the webpage.
-
     public DatabaseConnection(){
         //setup database connection
         this.source = new JdbcTemplate(DatabaseConfiguration.dataSource());
@@ -87,6 +85,7 @@ public class DatabaseConnection implements IDatabaseConnection {
         try{
             return this.source.queryForObject(sql, Event.getEventRowMapper(), eventcode, eventPassword);
         }catch(EmptyResultDataAccessException erdae){
+            //event code or password are incorrect
             return null;
         }
     }
@@ -94,15 +93,13 @@ public class DatabaseConnection implements IDatabaseConnection {
     @Override
     public ArrayList<Event> fetchEvents(int hostID){
         final String sql = "SELECT * FROM Events WHERE HostID = ?";
-        
-        // ArrayList<Event> events = new ArrayList<Event>();
 
         try{
             return (ArrayList<Event>)this.source.query(sql, Event.getEventRowMapper(), hostID);
         }catch(EmptyResultDataAccessException erdae){
+            //host id is incorrect
             return null;
         }
-        // return events;
     }
 
     @Override
@@ -110,7 +107,7 @@ public class DatabaseConnection implements IDatabaseConnection {
         final String sql = "INSERT INTO Events (EventName, EventPassword, StartTime, FinishTime, EstimatedAttendeeNumber) VALUES (?, ?, ?, ?, ?)";
         
         try{
-            //if row has been updated, user has been registered
+            //add a new event
             return this.source.update(
                 sql,
                 event.getEventName(), event.getEventPassword(), event.getStartDateTime(), event.getFinishDateTime(), event.getEstimatedAttendeeNumber()
@@ -118,8 +115,6 @@ public class DatabaseConnection implements IDatabaseConnection {
         }catch(DataAccessException dae){        
             return false;
         }
-
-        //return true;
     }
 
     @Override
@@ -131,10 +126,9 @@ public class DatabaseConnection implements IDatabaseConnection {
             return (ArrayList<Feedback>)this.source.query(sql, Feedback.getFeedbackRowMapper(), eventID);
         }
         catch(EmptyResultDataAccessException erdae){
+            //event id is not valid
             return null;
         }
-
-        // return feedback;
     }
 
     @Override
@@ -142,7 +136,6 @@ public class DatabaseConnection implements IDatabaseConnection {
         final String sql = "INSERT INTO Feedback (AttendeeName, Feedback, Mood, Answer, Additionals) VALUES (?, ?, ?, ?, ?)";
         
         try{
-            //if row has been updated, user has been registered
             return this.source.update(
                 sql,
                 feedback.getAttendeeName(), feedback.getFeedback(), feedback.getMood(), feedback.getAnswer(), feedback.getAdditionalInfomation()
@@ -150,8 +143,6 @@ public class DatabaseConnection implements IDatabaseConnection {
         }catch(DataAccessException dae){
             return false;
         }
-
-        //return true;
     }
     
     @Override
@@ -162,6 +153,7 @@ public class DatabaseConnection implements IDatabaseConnection {
         try{
             return this.source.queryForObject(sql, Template.getTemplateRowMapper(), eventID);
         }catch(EmptyResultDataAccessException erdae){
+            //event id not found
             return null;
         }
     }
@@ -171,13 +163,11 @@ public class DatabaseConnection implements IDatabaseConnection {
         final String sql = "INSERT INTO Template (Question) VALUES (?)";
         
         try{
-            //if row has been updated, user has been registered
             return this.source.update(
                 sql,
                 template.getQuestions()
             ) >= 1;
         }catch(DataAccessException dae){
-            //username duplicating violation will be catched here
             return false;
         }
     }

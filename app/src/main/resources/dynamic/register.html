@@ -28,6 +28,7 @@
 
         <p>By creating an account you agree to our <a href="/terms">Terms & Privacy</a>.</p><br>
         <!-- I actually prefer PUT method than POST method for register, but that involves JS and AJAX, so let's keep things simple -->
+        <label for="error" class="w3-text-red" th:style="${error == null ? 'display:none;' : 'display:block;'}"><b th:text="${error}"></b></label><br>
         <button type="submit" class="w3-btn w3-blue w3-round-xxlarge w3-padding" style="width:50%">Register</button>
 
     </form>

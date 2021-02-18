@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import cs261_project.data_structure.HostUser;
+import cs261_project.data_structure.*;
 
 /**
  * Handle general web page requests such as login and registrations
@@ -45,7 +45,7 @@ public class IndexProcessor {
     }
 
     @PostMapping("/login")
-    public final String handleLogin(@RequestParam() Map<String, String> args, HttpServletRequest request) {
+    public final String handleLogin(@RequestParam() Map<String, String> args, HttpServletRequest request, Model model) {
         final DatabaseConnection db = App.getInstance().getDbConnection();
         final String username = args.get("username").toString();
         final String password = args.get("password").toString();
@@ -54,8 +54,8 @@ public class IndexProcessor {
 
         //if username or password are incorrect
         if(user == null){
-            //TODO pop-up some message box to inform user
-            return "redirect:/loginPage";
+            model.addAttribute("error", "Either username or password is incorrect, please correct that.");
+            return "login";
         }
         //set user id as session variable
         request.setAttribute("HostID", user.getUserID());
@@ -72,11 +72,15 @@ public class IndexProcessor {
     }
 
     @PostMapping("/register")
-    public final String handleRegister(HostUser user){
+    public final String handleRegister(HostUser user, Model model){
         final DatabaseConnection db = App.getInstance().getDbConnection();
 
         final boolean status = db.RegisterHost(user);
-        //TODO: tell user to change their username (duplicate found) if status is false
+        if(!status){
+            //tell user about their error
+            model.addAttribute("error", "Username is duplicated, please change your username.");
+            return "register";
+        }
 
         return "redirect:/loginPage";
     }
@@ -88,11 +92,19 @@ public class IndexProcessor {
 
 
     @PostMapping("/joinEvent")
-    public final String handleJoinEvent(@RequestParam() Map<String, String> args) {
+    public final String handleJoinEvent(@RequestParam() Map<String, String> args, Model model, HttpServletRequest request) {
+        final DatabaseConnection db = App.getInstance().getDbConnection();
         final String eventCode = args.get("eventCode").toString();
         final String eventPassword = args.get("eventPassword").toString();
 
-        //TODO fetch event info, template will be rendered in the form.
+        final Event event = db.LookupEvent(eventCode, eventPassword);
+        if(event == null){
+            //event code or password are incorrect, inform user
+            model.addAttribute("error", "Either event code or event password is incorrect, please fix your input :(");
+            return "joinEvent";
+        }
+        //set event id as attendee session
+        request.setAttribute("EventID", event.getEventID());
         
         return "redirect:/attendee/feedbackForm";
     }
