@@ -1,3 +1,5 @@
+# Just don't commit database
+app/data.db
 
 # Ignore Gradle project-specific cache directory
 .gradle/
