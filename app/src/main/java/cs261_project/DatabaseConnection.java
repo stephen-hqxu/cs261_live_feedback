@@ -61,6 +61,14 @@ public class DatabaseConnection implements IDatabaseConnection {
         }
     }
 
+
+    //This method is for testing purposes
+    public void deleteUser(String username){
+        String sql = "DELETE FROM Users WHERE UserName = ?";
+        this.source.update(sql, username);
+        return;
+    }
+
     @Override
     public boolean RegisterHost(HostUser host){
         final String sql = "INSERT INTO Users (UserName, Password, FirstName, LastName) VALUES (?, ?, ?, ?)";

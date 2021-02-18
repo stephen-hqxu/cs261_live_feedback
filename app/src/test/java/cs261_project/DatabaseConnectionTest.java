@@ -6,7 +6,11 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+
+//Unit tests for all functions from DatabaseConnection.java
 public class DatabaseConnectionTest {
+
+    private DatabaseConnection conn = new DatabaseConnection();
 
     @Test
     @DisplayName("Test should run")
@@ -15,11 +19,20 @@ public class DatabaseConnectionTest {
     }
 
     @Test
-    @DisplayName("Should authenticate user")
-    public void shouldAuthenticateUser(){
-        DatabaseConnection conn = new DatabaseConnection();
-        HostUser user1 = conn.AuthenticateHost("apple","123456");
-        Assertions.assertNotNull(user1);
+    @DisplayName("Should be able to create and authenticate user")
+    public void shouldCreateAndAuthenticateUser(){
+        HostUser newHost = new HostUser();
+        newHost.setFirstname("test");
+        newHost.setLastname("user");
+        newHost.setUsername("testUser");
+        newHost.setPassword("123");
+        conn.RegisterHost(newHost);
+        HostUser user1 = conn.AuthenticateHost("testUser","123");
+        conn.deleteUser("testUser");
+        Assertions.assertAll("Full name",
+                ()-> Assertions.assertEquals("test",user1.getFirstname()),
+                ()-> Assertions.assertEquals("user",user1.getLastname())
+        );
     }
 
 }
