@@ -1,5 +1,8 @@
 package cs261_project.data_structure;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import org.springframework.jdbc.core.RowMapper;
 /**
  * Templates are custom questions from event host.
  * @author Group 12 - Stephen Xu, JunYan Huo, Ellen Tatum, JiaQi Lv, Alexander Odewale
@@ -10,14 +13,14 @@ public class Template {
     private int BelongsTo;
     private String Questions;//TODO Format JSON into a question object
     
-    private static final RowMapper<Feedback> Mapper = new RowMapper<Feedback>(){
+    private static final RowMapper<Template> Mapper = new RowMapper<Template>(){
         @Override
-        public Feedback mapRow(ResultSet rs, int rowNum) throws SQLException{
+        public Template mapRow(ResultSet rs, int rowNum) throws SQLException{
 
             Template template = new Template();
             //Do not call rs.next(), it's automatically managed
-            template.ID = rs.getInt("FID");
-            template.BelongsTo = rs.getID("EventID");
+            template.ID = rs.getInt("TID");
+            template.BelongsTo = rs.getInt("EventID");
             template.Questions = rs.getString("Question");
 
             return template;
