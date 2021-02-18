@@ -7,6 +7,10 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import org.springframework.jdbc.core.RowMapper;
+
 import cs261_project.data_structure.*;
 import cs261_project.config.DatabaseConfiguration;
 
@@ -113,8 +117,7 @@ public class DatabaseConnection implements IDatabaseConnection {
                 sql,
                 event.getEventName(), event.getEventPassword(), event.getStartDateTime(), event.getFinishDateTime(), event.getEstimatedAttendeeNumber()
             ) >= 1;
-        }catch(DataAccessException dae){
-            //username duplicating violation will be catched here           ???????????????
+        }catch(DataAccessException dae){        
             return false;
         }
 
@@ -146,7 +149,6 @@ public class DatabaseConnection implements IDatabaseConnection {
                 feedback.getAttendeeName(), feedback.getFeedback(), feedback.getMood(), feedback.getAnswer(), feedback.getAdditionalInfomation()
             ) >= 1;
         }catch(DataAccessException dae){
-            //username duplicating violation will be catched here           ???????????????
             return false;
         }
 
