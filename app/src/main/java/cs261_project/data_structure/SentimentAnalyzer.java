@@ -1,4 +1,4 @@
-package cs261_project.dialect;
+package cs261_project.data_structure;
 
 import edu.stanford.nlp.ling.CoreAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations;
