@@ -2,7 +2,7 @@ package cs261_project.data_structure;
 
 /**
  * Templates are custom questions from event host.
- * @author Group 12 - Stephen Xu, JuanYan Huo, Ellen Tatum, JiaQi Lv, Alexander Odewale
+ * @author Group 12 - Stephen Xu, JunYan Huo, Ellen Tatum, JiaQi Lv, Alexander Odewale
  */
 public class Template {
     //Variables
@@ -10,6 +10,20 @@ public class Template {
     private int BelongsTo;
     private String Questions;//TODO Format JSON into a question object
     
+    private static final RowMapper<Feedback> Mapper = new RowMapper<Feedback>(){
+        @Override
+        public Feedback mapRow(ResultSet rs, int rowNum) throws SQLException{
+
+            Template template = new Template();
+            //Do not call rs.next(), it's automatically managed
+            template.ID = rs.getInt("FID");
+            template.BelongsTo = rs.getID("EventID");
+            template.Questions = rs.getString("Question");
+
+            return template;
+        }
+    };
+
     public Template(){
 
     }
