@@ -12,9 +12,14 @@
         </div>
     </div>
 
-    <ul id="eventList" class="w3-container w3-ul w3-center">
-        <li>101.Tech workshop(Active)</li>
-    </ul>
+    <!-- Thymeleaf table printer -->
+    <th:block th:each="events: ${events}">
+        <ul id="eventList" class="w3-container w3-ul w3-center">
+            <!-- TODO Format list item to make it looks amazing -->
+            <li th:text="${events.EventID} + '.' + ${events.EventName}"></li>
+        </ul>
+    </th:block>
+    <p class="w3-text-red" th:text="${error}" th:style="${error == null ? 'display:none;' : 'display:block;'}"></p>
 
     <form class="w3-container w3-center" method="GET" action="/host/viewFeedback">
 

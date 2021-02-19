@@ -34,7 +34,7 @@
         <label for="attendeesNum" class="w3-text-blue"><b>Estimated number of attendees:</b></label><br>
         <input type="number" class="w3-input w3-border w3-light-grey w3-center" step="1" min="1" name="estimatedAttendeeNumber" id="estimatedAttendeeNumber" required><br>
 
-        <button type="submit" class="w3-btn w3-blue w3-round-xxlarge w3-padding" style="width:50%" onclick="submitMessage()">Create</button>
+        <button type="submit" class="w3-btn w3-blue w3-round-xxlarge w3-padding" style="width:50%">Create</button>
     </form>
 
     <br>
@@ -64,12 +64,37 @@
 
     <script>
 
+        //a record of the number of template question
         var template_count = 1;
 
-        $('#newEventForm').click(function(){
-            if (form.checkValidity()) {
+        $('#newEventForm').submit(function(){
+            if (this.checkValidity()) {
+                //keep an record of the number of template question
+                var num = $("<input>").attr("type", "hidden");
+                num.prop("name", "template_count");
+                //as template_count record the next index, we should minus one for the total number
+                num.val(template_count - 1);
+                $(this).append(num);
+
+                //submit template data by JSON
+                var questions = {};
+                $('.attributes').each(function(counter){
+                    //loop through all template question
+                    var curr_input = $(this).children("input");
+                    questions['Q' + (counter + 1) + 'Title'] = curr_input.val();
+                });
+                //finally append JSON to the form and submit
+                var template_questions = $("<input>").attr("type", "hidden");
+                template_questions.prop("name", "template_questions");
+                template_questions.val(JSON.stringify(questions));//convert object to JSON
+                $(this).append(template_questions);
+
                 alert("Event created");
+                return true;
             }
+
+            //do not submit if validation fails
+            return false;
         });
 
         $('#add_attr').click(function(){
@@ -83,9 +108,11 @@
             //set child props
             var next_label = next.children('#QxLabel');
             var next_remove = next.children('#del_attr_x');
+            var next_question = next.children('#QxTitle');
             next_label.prop("id", "Q" + template_count + "Label");
             next_label.html("Question " + template_count + ":");
-            next.children('#QxTitle').prop("id", "Q" + template_count + "Title");
+            next_question.prop("id", "Q" + template_count + "Title");
+            next_question.prop("name", "Q" + template_count + "Title");
             next_remove.prop("id", "del_attr_" + template_count);
             //update the clicking event
             next_remove.attr("onclick", "remove_attr(" + template_count + ");");
@@ -118,6 +145,7 @@
                 curr_label.html("Question " + index + ":");
                 curr_label.prop("id", "Q" + index + "Label");
                 curr_input.prop("id", "Q" + index + "Title");
+                curr_input.prop("name", "Q" + index + "Title");
                 curr_button.prop("id", "del_attr_" + index);
                 curr_button.attr("onclick", "remove_attr(" + index + ");");
             });

@@ -2,6 +2,7 @@ package cs261_project;
 
 import cs261_project.data_structure.*;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Handle data communication between the database. This is the header.
@@ -67,17 +68,17 @@ public interface IDatabaseConnection {
      * @return An array of event objects, each event object needs to be filled with data from the database similar to LookupEvent() function.
      * If host ID cannot be found, or there is no event associated with the host, return null.
      */
-    public abstract ArrayList<Event> fetchEvents(int hostID);
+    public abstract List<Event> fetchEvents(int hostID);
 
     /**
      * Create a new event. This will write new data to the database.
      * Note that to convert LocalDateTime object in the event class to string literal for database, use Event.TempoToString() function.
      * @see Event
      * @param event The event data
-     * @return True if event has been created in the database.
-     * Currently there is no other considerations for the case when an event shouldn't be created (feel free to add). So function always return true.
+     * @return Return the event id for the new event. If event is not created, return -1
+     * Currently there is no other considerations for the case when an event shouldn't be created (feel free to add). 
      */
-    public abstract boolean newEvent(Event event);
+    public abstract int newEvent(Event event);
 
     /**
      * Fetch all feedbacks with a given event ID for the event host, for which the feedbacks belong to.

@@ -1,5 +1,6 @@
 package cs261_project;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -54,14 +55,27 @@ public final class HostProcessor {
     }
 
     @GetMapping("/eventsPage")
-    public final String serveEventsPage(){
+    public final String serveEventsPage(HttpSession session, Model model){
+        final Object hostid = session.getAttribute("HostID");
+        if(hostid == null){
+            return "redirect:/loginPage";
+        }
+
+        final DatabaseConnection db = App.getInstance().getDbConnection();
+        //fetch all events belong to this host
+        final List<Event> events = db.fetchEvents(Integer.parseInt(hostid.toString()));
+        if(events == null || events.isEmpty()){
+            //for some reason host has signed in but we could find any event (maybe he hasn't created any)
+            model.addAttribute("error", "You don't have any event yet. Create one now!");
+        }
+        model.addAttribute("events", events);
+
         return "eventsPage";
     }
 
     @PostMapping("/newEvent")
     public final String handleNewEvent(Event event, @RequestParam() Map<String, String> args, HttpSession session){
         final Object hostid = session.getAttribute("HostID");
-        //if no active login has found
         if(hostid == null){
             return "redirect:/loginPage";
         }
@@ -76,12 +90,31 @@ public final class HostProcessor {
         event.setFinishDateTime(Event.StringToTempo(datetime));
         event.setHostID(Integer.parseInt(hostid.toString()));
 
-        final boolean status = db.newEvent(event);
-        if(!status){
-            //usually the status will always be true
+        final int eventid = db.newEvent(event);
+        if(eventid == -1){
+            //event creation failed, stay at the current page
             return "newEventPage";
         }
+        event.setEventID(eventid);
 
+        //parsing template questions (if any)
+        final int num_template = Integer.parseInt(args.get("template_count"));
+        if(num_template > 0){
+            //there are customised questions from host
+            Template template = new Template();
+
+            template.setEventID(event.getEventID());
+            //template_questions have been transalated into JSON
+            template.setQuestions(args.get("template_questions"));
+
+            final boolean status = db.createTemplate(template);
+            if(!status){
+                //template creation failed
+                return "newEventPage";
+            }
+        }
+
+        //so far so good, redirect user  back to home page
         return "redirect:/host/hostHomePage";
     }
 

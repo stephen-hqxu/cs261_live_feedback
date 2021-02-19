@@ -9,8 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Handle data communication between the database
@@ -123,11 +127,11 @@ public class DatabaseConnection implements IDatabaseConnection {
     }
 
     @Override
-    public ArrayList<Event> fetchEvents(int hostID){
-        final String sql = "SELECT * FROM Events WHERE HostID = ?";
+    public List<Event> fetchEvents(int hostID){
+        final String sql = "SELECT * FROM Events WHERE HostID = ? ORDER BY EID ASC";
 
         try{
-            return (ArrayList<Event>)this.source.query(sql, Event.getEventRowMapper(), hostID);
+            return this.source.query(sql, Event.getEventRowMapper(), hostID);
         }catch(EmptyResultDataAccessException erdae){
             //host id is incorrect
             return null;
@@ -135,17 +139,33 @@ public class DatabaseConnection implements IDatabaseConnection {
     }
 
     @Override
-    public boolean newEvent(Event event){
+    public int newEvent(Event event){
         final String sql = "INSERT INTO Events (HostID, EventName, EventPassword, StartTime, FinishTime, EstimatedAttendeeNumber) VALUES (?, ?, ?, ?, ?, ?)";
-        
+        final String id_query = "SELECT SEQ AS EID FROM Sqlite_Sequence WHERE Name = 'Events' LIMIT 1";
+
         try{
             //add a new event
-            return this.source.update(
+            this.source.update(
                 sql,
                 event.getHostID(), event.getEventName(), event.getEventPassword(), Event.TempoToString(event.getStartDateTime()), Event.TempoToString(event.getFinishDateTime()), event.getEstimatedAttendeeNumber()
-            ) >= 1;
-        }catch(DataAccessException dae){        
-            return false;
+            );
+            //query the inserted event id
+            //I couldn't find any better way of doing this. As long as the queries are not executing in parallel, it should be fine.
+            final int eventid = this.source.query(id_query, new ResultSetExtractor<Integer>(){
+                @Override
+                public Integer extractData(ResultSet rs) throws SQLException, DataAccessException{
+                    //there is only one row of data, containing the event id of the last inserted event
+                    rs.next();
+                    final int val = rs.getInt("EID");
+                    rs.close();
+
+                    return val;
+                }
+            });
+
+            return eventid;
+        }catch(DataAccessException dae){  
+            return -1;
         }
     }
 
@@ -165,12 +185,12 @@ public class DatabaseConnection implements IDatabaseConnection {
 
     @Override
     public boolean submitFeedback(Feedback feedback){
-        final String sql = "INSERT INTO Feedback (AttendeeName, Feedback, Mood, Answer, Additionals) VALUES (?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO Feedback (EventID, AttendeeName, Feedback, Mood, Answer, Additionals) VALUES (?, ?, ?, ?, ?, ?)";
         
         try{
             return this.source.update(
                 sql,
-                feedback.getAttendeeName(), feedback.getFeedback(), feedback.getMood(), feedback.getAnswer(), feedback.getAdditionalInfomation()
+                feedback.getEventID(), feedback.getAttendeeName(), feedback.getFeedback(), feedback.getMood(), feedback.getAnswer(), feedback.getAdditionalInfomation()
             ) >= 1;
         }catch(DataAccessException dae){
             return false;
@@ -192,12 +212,12 @@ public class DatabaseConnection implements IDatabaseConnection {
 
     @Override
     public boolean createTemplate(Template template){
-        final String sql = "INSERT INTO Template (Question) VALUES (?)";
+        final String sql = "INSERT INTO Template (EventID, Question) VALUES (?, ?)";
         
         try{
             return this.source.update(
                 sql,
-                template.getQuestions()
+                template.getEventID(), template.getQuestions()
             ) >= 1;
         }catch(DataAccessException dae){
             return false;

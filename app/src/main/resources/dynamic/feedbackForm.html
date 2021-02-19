@@ -29,7 +29,7 @@
         <label class="w3-text-blue" hidden><b>How would you rate the following on a scale of 1 to 10, with 10 being the best?</b></label><br>
         <div id="attributes" hidden></div><br>
 
-        <button type="submit" class="w3-btn w3-blue w3-round-xxlarge w3-padding" style="width:50%" onclick="submitMessage()">Submit feedback</button>
+        <button type="submit" class="w3-btn w3-blue w3-round-xxlarge w3-padding" style="width:50%">Submit feedback</button>
 
     </form>
 
@@ -43,12 +43,15 @@
 
     <script>
 
-        const form = $('#newEventForm');
-
-        form.click(function(){
-            if (form.checkValidity()) {
+        $('#feedbackForm').submit(function(){
+            if (this.checkValidity()) {
                 alert("Feedback submitted");
+
+                return true;
             }
+
+            //validation failed
+            return false;
         });
 
     </script>
