@@ -190,7 +190,7 @@ public class DatabaseConnection implements IDatabaseConnection {
         try{
             return this.source.update(
                 sql,
-                feedback.getEventID(), feedback.getAttendeeName(), feedback.getFeedback(), feedback.getMood(), feedback.getAnswer(), feedback.getAdditionalInfomation()
+                feedback.getEventID(), feedback.getAttendeeName(), feedback.getFeedback(), feedback.getMood(), feedback.getAnswer(), feedback.getAdditionalInformation()
             ) >= 1;
         }catch(DataAccessException dae){
             return false;
@@ -205,7 +205,7 @@ public class DatabaseConnection implements IDatabaseConnection {
         try{
             return this.source.queryForObject(sql, Template.getTemplateRowMapper(), eventID);
         }catch(EmptyResultDataAccessException erdae){
-            //event id not found
+            //event id not found, or there is no template for such event
             return null;
         }
     }

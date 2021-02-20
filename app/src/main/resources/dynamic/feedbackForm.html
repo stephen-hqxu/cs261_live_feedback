@@ -15,7 +15,7 @@
     <form class="w3-container w3-center" method="POST" id="feedbackForm" action="/attendee/submitFeedback">
 
         <label for="name" class="w3-text-blue"><b>Your name (Optional)</b></label><br>
-        <input type="text" class="w3-input w3-border w3-light-grey w3-center" placeholder="Your name" name="name" id="name"><br>
+        <input type="text" class="w3-input w3-border w3-light-grey w3-center" placeholder="Your name" name="Attendeename" id="Attendeename"><br>
 
         <label for="feedback" class="w3-text-blue"><b>Feedback</b></label><br>
         <input type="text" class="w3-input w3-border w3-light-grey w3-center" placeholder="Feedback" name="feedback" id="feedback" required><br>
@@ -24,18 +24,23 @@
         <input type="number" class="w3-input w3-border w3-light-grey w3-center" name="mood" id="mood" step="1" min="1" max="10" required><br>
 
         <label for="info" class="w3-text-blue"><b>Additional information (Optional)</b></label><br>
-        <input type="text" class="w3-input w3-border w3-light-grey w3-center" name="info" id="info"><br>
+        <input type="text" class="w3-input w3-border w3-light-grey w3-center" name="additionalInformation" id="additionalInformation"><br>
 
-        <label class="w3-text-blue" hidden><b>How would you rate the following on a scale of 1 to 10, with 10 being the best?</b></label><br>
-        <div id="attributes" hidden></div><br>
-
-        <button type="submit" class="w3-btn w3-blue w3-round-xxlarge w3-padding" style="width:50%">Submit feedback</button>
+        <label class="w3-text-blue" th:style="${question} == null ? 'display:none;' : 'display:block;'"><b>How would you rate the following on a scale of 1 to 10, with 10 being the best?</b></label><br>
+    
+        <button type="submit" id="feedback_submit" class="w3-btn w3-blue w3-round-xxlarge w3-padding" style="width:50%">Submit feedback</button>
 
     </form>
 
-    <br><br>
+    <br>
 
-    <form class="w3-container w3-center" method="POST" action="/attendee/leaveEvent">
+    <!-- This is a template that will be copied by JS -->
+    <div id="attributes_x" class="template_arrtibutes" style="display:none;">
+        <label id="QxTitle" class="w3-text-blue">x.Title</label>
+        <input type="number" class="w3-input w3-border w3-light-grey w3-center" name="QxAnswer" id="QxAnswer" step="1" min="1" max="10" required><br>
+    </div><br>
+
+    <form class="w3-container w3-center" method="GET" action="/attendee/leaveEvent">
 
         <button type="submit" class="w3-btn w3-blue-grey w3-round-xxlarge w3-padding" style="width:50%">Leave event</button>
 
@@ -43,14 +48,63 @@
 
     <script>
 
+        var template_questions = "[[${question}]]";
+
+        //this function will be called as soon as the webpage loads up
+        $(document).ready(function(){
+            //render template
+            //as Thymeleaf parsed quotation marks to html values, we need to convert it back
+            template_questions = template_questions.replaceAll("&quot;", "\"");
+            template_questions = JSON.parse(template_questions);
+
+            var i;
+            for(i = 0; i < template_questions.length; i++){
+                var q = i + 1;
+                //get a new template object
+                //change the props
+                var next = $("#attributes_x").clone();
+                var curr_title = next.children("#QxTitle");
+                var curr_answer = next.children("#QxAnswer");
+
+                next.css("display", "block");
+                next.prop("class", "attributes");//to distinguish from the template elements
+                next.prop("id", "attributes_" + q);
+                curr_title.prop("id", "Q" + q + "Title");
+                curr_title.html(q + "." + template_questions[i].title);
+                curr_answer.prop("id", "Q" + q + "Answer");
+                curr_answer.prop("name", "Q" + q + "Answer");
+
+                //render
+                next.insertBefore("#feedback_submit");
+            }
+        });
+
         $('#feedbackForm').submit(function(){
             if (this.checkValidity()) {
+                //check if there is any customised question
+                if(template_questions.length > 0){
+                    //serialise feedback for template questions
+                    var answers = new Array();
+                    //loop through each answers
+                    $(".attributes").each(function(i){
+                        var item = {};//an empty object
+                        var curr_answer = $(this).children("input");
+                        item.answer = curr_answer.val();
+                        //push to answers array
+                        answers.push(item);
+                    });
+                    //create a hidden field and submit
+                    var template_answers = $("<input>").attr("type", "hidden");
+                    template_answers.prop("name", "answer");//matches our Feedback class object, auto-parsed
+                    template_answers.val(JSON.stringify(answers));//convert object to JSON
+                    $(this).append(template_answers);
+                }
+                
                 alert("Feedback submitted");
-
                 return true;
             }
 
-            //validation failed
+            //validation failed, prevent posting
             return false;
         });
 

@@ -40,22 +40,38 @@ public final class AttendeeProcessor {
         model.addAttribute("eventCode", event.getEventID());
         model.addAttribute("eventName", event.getEventName());
 
-        //TODO render feedback template
+        //find template
+        final Template template = db.fetchTemplate(event.getEventID());
+        if(template != null){
+            //template exists for this event, send to client
+            //we send all JSON to client and let the web browser to parse the template to reduce work load on the server
+            model.addAttribute("question", template.getQuestions());
+        }
 
         return "feedbackForm";
     }
 
     @PostMapping("/submitFeedback")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<String> processFeedback(Feedback feedback){
+    public String processFeedback(Feedback feedback, HttpSession session){
+        final Object eventid = session.getAttribute("EventID");
+        //if no active event has found
+        if(eventid == null){
+            return "redirect:/joinEventPage";
+        }
+        final DatabaseConnection db = App.getInstance().getDbConnection();
+        //submit feedback to database
+        final boolean status = db.submitFeedback(feedback);
+        if(!status){
+            //feedback submission failed
+            return "feedbackForm";
+        }
 
-        //TODO make the Feedback.java matches the interface of the webpage parameters
-        //TODO process feedback, the attendee needs to stay on the feedbackForm webpage
-
-        return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+        //after the feedback has been submitted, we should automatically make them leave the event
+        //since we are not asking attendees to submit multiple feedback
+        return "redirect:/attendee/leaveEvent";
     }
 
-    @PostMapping("/leaveEvent")
+    @GetMapping("/leaveEvent")
     public final String handleLeaveEvent(HttpSession session){
         //remove event session id
         session.removeAttribute("EventID");

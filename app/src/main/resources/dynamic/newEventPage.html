@@ -45,9 +45,8 @@
         <!-- Please style the attribute thingy -->
         <!-- This item will be duplicated by JS -->
         <div id="attributes_x" class="template_attributes" style="display:none;">
-            <label id="QxLabel" class="w3-text-blue"><b>Question x:</b></label><br>
-            <!-- Find a better place to put the delete button, it's too big -->
-            <button id="del_attr_x" class="w3-btn w3-blue w3-round-xxlarge w3-padding" onclick='remove_attr(x);'>- Remove this attribute -</button>
+            <button id="del_attr_x" class="w3-btn w3-blue w3-round-xxlarge w3-padding" onclick='remove_attr(x);'> - </button>
+            <label id="QxLabel" class="w3-text-blue">Question x:</label>
             <input type="text" class="w3-input w3-border w3-light-grey w3-center" name="QxTitle" id="QxTitle" required><br>
         </div>
 
@@ -77,11 +76,15 @@
                 $(this).append(num);
 
                 //submit template data by JSON
-                var questions = {};
+                var questions = new Array();
                 $('.attributes').each(function(counter){
+                    //construct an empty object
+                    var item = {};
                     //loop through all template question
                     var curr_input = $(this).children("input");
-                    questions['Q' + (counter + 1) + 'Title'] = curr_input.val();
+                    item.title = curr_input.val();
+                    //insert into questions array
+                    questions.push(item);
                 });
                 //finally append JSON to the form and submit
                 var template_questions = $("<input>").attr("type", "hidden");

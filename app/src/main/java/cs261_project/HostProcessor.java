@@ -126,7 +126,7 @@ public final class HostProcessor {
         return "viewFeedbackPage";
     }
 
-    @PostMapping("/signout")
+    @GetMapping("/signout")
     public final String handleSignout(HttpSession session){
         //delete the host session
         session.removeAttribute("HostID");

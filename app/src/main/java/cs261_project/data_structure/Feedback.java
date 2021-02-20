@@ -66,7 +66,7 @@ public class Feedback {
         this.TemplateAnswer = answer;
     }
 
-    public void setAdditionalInfomation(@Nullable String additionals){
+    public void setAdditionalInformation(@Nullable String additionals){
         this.AdditionalInfo = additionals;
     }
 
@@ -100,7 +100,7 @@ public class Feedback {
         return this.TemplateAnswer;
     }
 
-    public @Nullable String getAdditionalInfomation(){
+    public @Nullable String getAdditionalInformation(){
         return this.AdditionalInfo;
     }
 
