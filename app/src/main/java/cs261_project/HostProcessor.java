@@ -1,7 +1,10 @@
 package cs261_project;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.servlet.http.HttpSession;
 
@@ -11,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import cs261_project.data_structure.*;
 
@@ -50,7 +55,12 @@ public final class HostProcessor {
     }
 
     @GetMapping("/newEventPage")
-    public final String serveCreateEventPage(){
+    public final String serveCreateEventPage(HttpSession session){
+        //login check
+        if(session.getAttribute("HostID") == null){
+            return "redirect:/loginPage";
+        }
+
         return "newEventPage";
     }
 
@@ -119,11 +129,62 @@ public final class HostProcessor {
     }
 
     @GetMapping("/viewFeedback")
-    public final String serveViewFeedback(){
-
-        //TODO view feedback
+    public final String serveViewFeedback(@RequestParam("eventCode") String eventid, HttpSession session, Model model){
+        //login check
+        if(session.getAttribute("HostID") == null){
+            return "redirect:/loginPage";
+        }
+        if(eventid == null || eventid.isEmpty()){
+            //no event code has been provided
+            return "redirect:/host/hostHomePage";
+        }
+        final DatabaseConnection db = App.getInstance().getDbConnection();
+        //render feedback page with event information
+        final Event event = db.LookupEvent(Integer.parseInt(eventid));
+        if(event == null){
+            //event not found
+            return "redirect:/host/hostHomePage";
+        }
+        model.addAttribute("eventCode", event.getEventID());
+        model.addAttribute("eventName", event.getEventName());
 
         return "viewFeedbackPage";
+    }
+
+    //HTML SSE
+    @GetMapping("/updateFeedback")
+    @ResponseBody //it will return an object instead of view
+    public final SseEmitter handleFeedbackUpdate(@RequestParam("eventCode") String eventid){
+        if(eventid == null || eventid.isEmpty()){
+            return null;
+        }
+        //set time out of the connection 10s
+        SseEmitter emitter = new SseEmitter(10000L);
+        final DatabaseConnection db = App.getInstance().getDbConnection();
+
+        //non-blocking response, as there might be multiple hosts asking for response, and we don't want to stall any of them
+        ExecutorService exec = Executors.newSingleThreadExecutor();
+        exec.execute(new Runnable(){
+            @Override
+            public void run(){
+                try{
+                    //fetch feedback
+                    //now regardless of any new feedback, it will always return
+                    final List<Feedback> feedback = db.fetchFeedbacks(Integer.parseInt(eventid));
+                    emitter.send(feedback);
+                    
+                }catch(IOException ioe){
+                    emitter.completeWithError(ioe);
+                }
+                finally{
+                    emitter.complete();
+                }
+            }
+        });
+        //shutdown the thread
+        exec.shutdown();
+        
+        return emitter;
     }
 
     @GetMapping("/signout")

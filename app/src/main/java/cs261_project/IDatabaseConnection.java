@@ -1,7 +1,6 @@
 package cs261_project;
 
 import cs261_project.data_structure.*;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -89,7 +88,7 @@ public interface IDatabaseConnection {
      * mood, optional template answers and optional additional information.
      * If no feedback can be found with the event ID, or there is currently no feedback for this event, return null.
      */
-    public abstract ArrayList<Feedback> fetchFeedbacks(int eventID);
+    public abstract List<Feedback> fetchFeedbacks(int eventID);
 
     /**
      * Submit feedback from an attendee to the database.

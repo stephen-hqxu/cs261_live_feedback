@@ -13,7 +13,6 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -170,12 +169,11 @@ public class DatabaseConnection implements IDatabaseConnection {
     }
 
     @Override
-    public ArrayList<Feedback> fetchFeedbacks(int eventID){
+    public List<Feedback> fetchFeedbacks(int eventID){
         final String sql = "SELECT * FROM Feedback WHERE EventID = ?";
-        // ArrayList<Feedback> feedback = new ArrayList<Feedback>();
 
         try{
-            return (ArrayList<Feedback>)this.source.query(sql, Feedback.getFeedbackRowMapper(), eventID);
+            return this.source.query(sql, Feedback.getFeedbackRowMapper(), eventID);
         }
         catch(EmptyResultDataAccessException erdae){
             //event id is not valid

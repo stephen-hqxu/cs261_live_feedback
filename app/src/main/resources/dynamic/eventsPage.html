@@ -13,23 +13,21 @@
     </div>
 
     <!-- Thymeleaf table printer -->
-    <th:block th:each="events: ${events}">
-        <ul id="eventList" class="w3-container w3-ul w3-center">
-            <!-- TODO Format list item to make it looks amazing -->
-            <li th:text="${events.EventID} + '.' + ${events.EventName}"></li>
-        </ul>
-    </th:block>
-    <p class="w3-text-red" th:text="${error}" th:style="${error == null ? 'display:none;' : 'display:block;'}"></p>
-
     <form class="w3-container w3-center" method="GET" action="/host/viewFeedback">
 
-        <label for="eventCode" class="w3-text-blue"><b>Check the feedback of an event by entering the event code:</b></label><br>
-        <input type="number" class="w3-input w3-border w3-light-grey w3-center" name="eventCode" id="eventCode" required><br>
-
-        <button type="submit" class="w3-btn w3-blue w3-round-xxlarge w3-padding" style="width:50%">Go</button>
+        <ul id="eventList" class="w3-container w3-ul w3-center">
+            <li th:each="events: ${events}">
+                <p th:text="${events.EventID} + '.' + ${events.EventName}">x.XXX</p>
+                <button name="eventCode" th:attr="value=${events.EventID}" type="submit" class="w3-btn w3-blue w3-round-xxlarge w3-padding" style="width:25%">View Details</button>
+            </li>
+        </ul>
 
     </form>
+    
+    <p class="w3-text-red w3-center" th:text="${error}" th:style="${error == null ? 'display:none;' : 'display:block;'}"></p>
+
     <br>
+
     <form class="w3-container w3-center" method="GET" action="/host/hostHomePage">
 
         <button type="submit" class="w3-btn w3-blue-grey w3-round-xxlarge w3-padding" style="width:50%">Go back to menu</button>

@@ -8,7 +8,7 @@
 
     <div class="w3-container w3-center w3-large w3-indigo">
         <div>
-            <h1 id="title">Event name:"Name" Event code:"Code"</h1><br>
+            <h1 id="title" th:text="${eventCode} + '::' + ${eventName}"></h1><br>
             <h2>Here are the feedback:</h2>
         </div>
     </div>
@@ -17,7 +17,8 @@
 
     <div class="w3-container w3-center w3-large" style="width:75%; height:40vh">
         <div id="feedbackBox" >
-            <p>awdadwawfawfawefsegfhfthdtyjdtyhdrsgsefwadfå</p>
+            <!-- TODO print template answers -->
+            <h1 id="updateTest"></h1>
         </div>
     </div>
 
@@ -25,7 +26,7 @@
 
     <div class="w3-container w3-center w3-medium w3-border">
         <h2>Average mood:</h2>
-        <p id="mood">10/10</p>
+        <p id="mood">-100/10</p>
     </div>
 
     <br>
@@ -36,6 +37,27 @@
 
     </form>
 
+    <script>
+
+        $(document).ready(function(){
+            var eventCode = "[[${eventCode}]]";
+            var event = new EventSource("/host/updateFeedback?eventCode=" + eventCode);
+
+            event.onpen = function(e){
+                //clear all old data
+            };
+
+            event.onmessage = function(e){
+                //print new data
+                $("#updateTest").html(e.data);
+            };
+
+            event.onerror = function(e){
+                //print some error message
+            };
+        });
+
+    </script>
 
 </body>
 </html>

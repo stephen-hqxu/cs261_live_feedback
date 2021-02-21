@@ -2,14 +2,11 @@ package cs261_project;
 
 import javax.servlet.http.HttpSession;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import cs261_project.data_structure.*;
 
@@ -60,6 +57,7 @@ public final class AttendeeProcessor {
         }
         final DatabaseConnection db = App.getInstance().getDbConnection();
         //submit feedback to database
+        feedback.setEventID(Integer.parseInt(eventid.toString()));
         final boolean status = db.submitFeedback(feedback);
         if(!status){
             //feedback submission failed
