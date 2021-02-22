@@ -50,7 +50,9 @@ public class DatabaseConnection implements IDatabaseConnection {
     //     });
     //     return res;
     // }
-    
+
+
+    //Returns a HostUser object if the username and the password are correct.
     @Override
     public HostUser AuthenticateHost(String username, String password){
         final String sql = "SELECT * FROM Users WHERE UserName = ? AND Password = ?";
