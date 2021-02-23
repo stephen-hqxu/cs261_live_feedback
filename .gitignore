@@ -18,3 +18,4 @@ build/
 # Ignore Gradle build output directory
 build
 stanford-corenlp-4.2.0-models-english.jar
+.DS_Store
