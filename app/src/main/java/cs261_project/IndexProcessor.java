@@ -55,7 +55,7 @@ public class IndexProcessor {
 
         //if username or password are incorrect
         if(user == null){
-            model.addAttribute("error", "Either username or password is incorrect, please correct that.");
+            model.addAttribute("error", "Incorrect username or password, please try again.");
             return "login";
         }
         //create a new session
@@ -81,7 +81,7 @@ public class IndexProcessor {
         final boolean status = db.RegisterHost(user);
         if(!status){
             //tell user about their error
-            model.addAttribute("error", "Username is duplicated, please change your username.");
+            model.addAttribute("error", "Username already exists, Please choose another username.");
             return "register";
         }
 
