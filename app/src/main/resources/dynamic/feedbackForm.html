@@ -87,11 +87,8 @@
                     var answers = new Array();
                     //loop through each answers
                     $(".attributes").each(function(i){
-                        var item = {};//an empty object
-                        var curr_answer = $(this).children("input");
-                        item.answer = curr_answer.val();
                         //push to answers array
-                        answers.push(item);
+                        answers.push($(this).children("input").val());
                     });
                     //create a hidden field and submit
                     var template_answers = $("<input>").attr("type", "hidden");
