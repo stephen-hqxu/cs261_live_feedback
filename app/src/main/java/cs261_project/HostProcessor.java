@@ -147,8 +147,7 @@ public final class HostProcessor {
             //event not found
             return "redirect:/host/hostHomePage";
         }
-        model.addAttribute("eventCode", event.getEventID());
-        model.addAttribute("eventName", event.getEventName());
+        model.addAttribute("Event", event);
         //return an empty JSON array if there is no template
         model.addAttribute("templateQuestions", (template == null) ? "[]" : template.getQuestions());
 

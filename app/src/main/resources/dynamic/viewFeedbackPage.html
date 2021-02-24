@@ -8,7 +8,11 @@
 
     <div class="w3-container w3-center w3-large w3-indigo">
         <div>
-            <h1 id="title" th:text="${eventCode} + ':' + ${eventName}"></h1><br>
+            <h1 id="title" th:text="${Event.eventName}"></h1><br>
+
+            <h2 th:text="'Event Code: ' + ${Event.eventID}"></h2>
+            <h2 th:text="'Event Password: ' + ${Event.eventPassword}"></h2><br>
+            
             <h2>Here are the feedback:</h2>
         </div>
     </div>
@@ -47,7 +51,7 @@
 
     <div class="w3-container w3-center w3-medium w3-border">
         <h2>Average mood:</h2>
-        <p id="mood">-100/10</p>
+        <p id="mood">0/10</p>
     </div>
 
     <br>
@@ -61,7 +65,7 @@
     <script>
 
         $(document).ready(function(){
-            var eventCode = "[[${eventCode}]]";
+            var eventCode = "[[${Event.eventID}]]";
             //template questions is basically an array of string, corresponded to each question in order
             var template_questions = "[[${templateQuestions}]]";
             var event = new EventSource("/host/updateFeedback?eventCode=" + eventCode);
@@ -73,7 +77,7 @@
                 template_questions = JSON.parse(template_questions.replaceAll("&quot;", "\""));
                 if(template_questions.length == 0){
                     //no template, tell user they don't have template
-                    $("<p>").html("You don't have any customised questions").appendTo("#templateEnd");
+                    $("<p>").html("You don't have any customised attributes").appendTo("#templateEnd");
                 }else{
                     $.each(template_questions, function(i, v){
                         var templateBox = $("#templateBox_template").clone().prop("id", "templateBox_" + i).prop("hidden", false);
@@ -101,13 +105,14 @@
                 var feedback = JSON.parse(e.data);
                 //the average score for each template question
                 var average_score = new Array(template_questions.length).fill(0);
+                var average_mood = parseInt(0);
 
                 //clear old data
                 //setup a flag for insertion
                 $("#feedbackContainer").html("<hr id='feedbackEnd'>");
                 if(feedback.length == 0){
                     //no feedback
-                    $("<p>").html("Be patient... Feedback are coming...").appendTo("#feedbackEnd");
+                    $("<p>").html("No feedback has been submitted yet.").appendTo("#feedbackEnd");
                 }else{
                     //loop through each feedback
                     $.each(feedback, function(i, v){
@@ -128,12 +133,18 @@
                         //insert
                         feedbackBox.insertBefore($("#feedbackEnd"));
 
+                        //calculating sum of mood
+                        average_mood += parseInt(v.mood);
+
                         //calculate average marks for template questions
                         $.each(template_answers, function(i_t, v_t){
                             //first we add them up
                             average_score[i_t] += parseInt(v_t);
                         });
                     });
+                    //average mood
+                    average_mood /= feedback.length;
+                    $("#mood").html(average_mood + "/10");
 
                     //at the end of the entire feedback loop, we take the average
                     //calculate average marks for template questions

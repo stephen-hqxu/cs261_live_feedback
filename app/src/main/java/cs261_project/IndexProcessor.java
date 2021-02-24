@@ -103,7 +103,7 @@ public class IndexProcessor {
         final Event event = db.LookupEvent(eventCode, eventPassword);
         if(event == null){
             //event code or password are incorrect, inform user
-            model.addAttribute("error", "Either event code or event password is incorrect, please fix your input :(");
+            model.addAttribute("error", "Incorrect event code or password, please try again.");
             return "joinEvent";
         }
         //create a session

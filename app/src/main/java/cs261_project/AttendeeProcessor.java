@@ -34,8 +34,7 @@ public final class AttendeeProcessor {
         //fetch event
         final Event event = db.LookupEvent(Integer.parseInt(eventid.toString()));
         //render event details and display
-        model.addAttribute("eventCode", event.getEventID());
-        model.addAttribute("eventName", event.getEventName());
+        model.addAttribute("Event", event);
 
         //find template
         final Template template = db.fetchTemplate(event.getEventID());
