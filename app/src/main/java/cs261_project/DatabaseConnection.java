@@ -66,14 +66,6 @@ public class DatabaseConnection implements IDatabaseConnection {
         }
     }
 
-
-    //This method is for testing purposes
-    public void deleteUser(String username){
-        String sql = "DELETE FROM Users WHERE UserName = ?";
-        this.source.update(sql, username);
-        return;
-    }
-
     @Override
     public HostUser LookupHost(int hostid){
         final String sql = "SELECT * FROM Users WHERE HID = ?";
@@ -222,6 +214,30 @@ public class DatabaseConnection implements IDatabaseConnection {
         }catch(DataAccessException dae){
             return false;
         }
+    }
+
+    //This method is for testing purposes
+    public void deleteUser(String username){
+        String sql = "DELETE FROM Users WHERE UserName = ?";
+        this.source.update(sql, username);
+    }
+
+    //This method is for testing purposes
+    public void deleteEvent(int eventID){
+        String sql = "DELETE FROM Events WHERE EID = ?";
+        this.source.update(sql, eventID);
+    }
+
+    //This method is for testing purposes
+    public void deleteTemplate(int templateID){
+        String sql = "DELETE FROM Template WHERE TID = ?";
+        this.source.update(sql, templateID);
+    }
+
+    //This method is for testing purposes
+    public void deleteFeedback(int FID){
+        String sql = "DELETE FROM Feedback WHERE FID = ?";
+        this.source.update(sql, FID);
     }
 
 }

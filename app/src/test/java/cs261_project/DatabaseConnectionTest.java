@@ -1,11 +1,16 @@
 package cs261_project;
 
 import cs261_project.data_structure.Event;
+import cs261_project.data_structure.Feedback;
 import cs261_project.data_structure.HostUser;
+import cs261_project.data_structure.Template;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 
 //Unit tests for all functions from DatabaseConnection.java
@@ -22,10 +27,36 @@ public class DatabaseConnectionTest {
         return newHost;
     }
 
-//    private Event getEvent(int hostID){
-//        Event newEvent = new Event();
-//        return newEvent;
-//    }
+    private Event getEvent(int hostID){
+        Event newEvent = new Event();
+        newEvent.setEventName("testEvent");
+        LocalDateTime startTime = LocalDateTime.now();
+        LocalDateTime endTime = startTime.plusHours(1);
+        newEvent.setStartDateTime(startTime);
+        newEvent.setFinishDateTime(endTime);
+        newEvent.setEventPassword("123");
+        newEvent.setEstimatedAttendeeNumber(10);
+        newEvent.setHostID(hostID);
+        return newEvent;
+    }
+
+    private Template getTemplate(int eventID){
+        Template newTemplate = new Template();
+        newTemplate.setEventID(eventID);
+        newTemplate.setQuestions("This is a test");
+        return newTemplate;
+    }
+
+    private Feedback getFeedback(int eventID){
+        Feedback newFeedback = new Feedback();
+        newFeedback.setEventID(eventID);
+        newFeedback.setFeedback("This is a test");
+        newFeedback.setAnswer("N/A");
+        newFeedback.setAdditionalInformation("N/A");
+        newFeedback.setAttendeeName("testUser");
+        newFeedback.setMood((byte) 1);
+        return newFeedback;
+    }
 
     @Test
     @DisplayName("Test should run")
@@ -35,7 +66,7 @@ public class DatabaseConnectionTest {
 
 
     @Test
-    @DisplayName("Should not allow user to register if the username is already taken")
+    @DisplayName("The database should not create new user if the username is already taken")
     void shouldNotAllowDuplicateUsername(){
         //Create a HostUser (username = "testUser")
         HostUser user1 = getTestHostUser("testUser");
@@ -69,7 +100,7 @@ public class DatabaseConnectionTest {
 
 
     @Test
-    @DisplayName("Should be able to create and authenticate host user")
+    @DisplayName("The database should be able to create and authenticate user")
     void shouldCreateAndAuthenticateHostUser(){
         //Create a new HostUser
         HostUser newHost = getTestHostUser("testUser");
@@ -92,7 +123,7 @@ public class DatabaseConnectionTest {
 
 
     @Test
-    @DisplayName("Should be able to loop up host by host ID")
+    @DisplayName("The database should be able to look up host by host ID")
     void shouldLookUpHostUser(){
         //Create a new HostUser
         HostUser newHost = getTestHostUser("testUser");
@@ -112,6 +143,115 @@ public class DatabaseConnectionTest {
 
         //Two users should be the same
         Assertions.assertEquals(user1.getUsername(),user2.getUsername());
+
+    }
+
+
+    @Test
+    @DisplayName("The database should be able to store events")
+    void shouldStoreEvent(){
+        //Create a new HostUser
+        HostUser newHost = getTestHostUser("testUser");
+        //Add the new user to the database
+        conn.RegisterHost(newHost);
+        //Retrieve the new user from the database using username and password
+        HostUser user1 = conn.AuthenticateHost("testUser","123");
+        //Get userID
+        int userID = user1.getUserID();
+
+        //Create a new event, link it to testUser
+        Event newEvent = getEvent(userID);
+
+        //Add new event to database
+        int eventID = conn.newEvent(newEvent);
+
+        //Verify new event
+        Event event = conn.LookupEvent(eventID);
+
+        //Clean up
+        conn.deleteEvent(eventID);
+        conn.deleteUser("testUser");
+
+        Assertions.assertAll("Event",
+                ()->Assertions.assertEquals("testEvent",event.getEventName()),
+                ()->Assertions.assertEquals("123",event.getEventPassword())
+        );
+
+    }
+
+    @Test
+    @DisplayName("The database shoule be able to store the template of an event")
+    void shouldStoreTemplate(){
+        //Create a new HostUser
+        HostUser newHost = getTestHostUser("testUser");
+        //Add the new user to the database
+        conn.RegisterHost(newHost);
+        //Retrieve the new user from the database using username and password
+        HostUser user1 = conn.AuthenticateHost("testUser","123");
+        //Get userID
+        int userID = user1.getUserID();
+        //Create a new event, link it to testUser
+        Event newEvent = getEvent(userID);
+        //Add new event to database
+        int eventID = conn.newEvent(newEvent);
+
+        //Create a new template, link it to testEvent
+        Template newTemplate = getTemplate(eventID);
+        //Add template to database
+        boolean result = conn.createTemplate(newTemplate);
+
+        //Verify
+        Template template = conn.fetchTemplate(eventID);
+        int TID = template.getTemplateID();
+
+        //Clean up
+        conn.deleteEvent(eventID);
+        conn.deleteUser("testUser");
+        conn.deleteTemplate(TID);
+
+        Assertions.assertAll("Template",
+                ()->Assertions.assertTrue(result),
+                ()->Assertions.assertEquals("This is a test", template.getQuestions())
+        );
+
+    }
+
+    @Test
+    @DisplayName("The database should be able to store feedback to an event")
+    void shouldStoreFeedback(){
+        //Create a new HostUser
+        HostUser newHost = getTestHostUser("testUser");
+        //Add the new user to the database
+        conn.RegisterHost(newHost);
+        //Retrieve the new user from the database using username and password
+        HostUser user1 = conn.AuthenticateHost("testUser","123");
+        //Get userID
+        int userID = user1.getUserID();
+        //Create a new event, link it to testUser
+        Event newEvent = getEvent(userID);
+        //Add new event to database
+        int eventID = conn.newEvent(newEvent);
+
+        //Create a new feedback
+        Feedback newFeedback = getFeedback(eventID);
+        //Add new feedback to database
+        boolean result = conn.submitFeedback(newFeedback);
+
+        //Verify
+        List<Feedback> feedbackList = conn.fetchFeedbacks(eventID);
+        Feedback feedback = feedbackList.get(0);
+
+        //Clean up
+        conn.deleteFeedback(feedback.getFeedbackID());
+        conn.deleteEvent(eventID);
+        conn.deleteUser("testUser");
+
+        Assertions.assertAll("Feedback",
+                ()->Assertions.assertTrue(result),
+                ()->Assertions.assertEquals(1,feedbackList.size()),
+                ()->Assertions.assertEquals("This is a test",feedback.getFeedback()),
+                ()->Assertions.assertEquals("testUser",feedback.getAttendeeName())
+                );
 
     }
 
