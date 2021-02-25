@@ -1,5 +1,7 @@
 package cs261_project;
 
+import java.util.Base64;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,16 @@ import cs261_project.data_structure.*;
 @Controller
 @RequestMapping("/attendee")
 public final class AttendeeProcessor {
+    //Pattern matching for abusive language
+    //however it can't deal with hidden abusal, for which neural network must be used
+    //this is a base64 encoded message to avoid showing out the bad contents directly in the source code
+    private static String ABUSIVE_PATTERN = 
+    "LiooZnVja3xzaGl0fGJpdGNofG1vdGhlcmZ1Y2tlcnxqZXJrfG1vcm9ufGJhc3RhcmR8c3Vja3xhc3N8ZGlja3xwdXNzeXxkYW1ufGhlbGx8d2Fua2VyfGlkaW90fGN1bnR8d2hvcmV8d2hvcmluZykuKg==";
+
+    static{
+        //decode the content
+        AttendeeProcessor.ABUSIVE_PATTERN = new String(Base64.getDecoder().decode(AttendeeProcessor.ABUSIVE_PATTERN));
+    }
 
     public AttendeeProcessor(){
 
@@ -55,6 +67,17 @@ public final class AttendeeProcessor {
             return "redirect:/joinEventPage";
         }
         final DatabaseConnection db = App.getInstance().getDbConnection();
+
+        //post processing
+        final String fed_str = feedback.getFeedback();
+        //firstly don't submit feedback if it contains bad language
+        if(fed_str.matches(AttendeeProcessor.ABUSIVE_PATTERN)){
+            //we don't need to inform user, just make them leaving the event without submitting the feedback
+            return "redirect:/attendee/leaveEvent";
+        }
+        //secondly calculate the average score for the provided mood and the sentiment analyser
+        feedback.setMood((byte)(0.5 * (feedback.getMood() + SentimentAnalyzer.getSentimentType(fed_str))));
+
         //submit feedback to database
         feedback.setEventID(Integer.parseInt(eventid.toString()));
         final boolean status = db.submitFeedback(feedback);

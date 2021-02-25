@@ -51,7 +51,7 @@
 
     <div class="w3-container w3-center w3-medium w3-border">
         <h2>Average mood:</h2>
-        <p id="mood">0/10</p>
+        <p id="mood">No feedback to show the average mood</p>
     </div>
 
     <br>
@@ -66,6 +66,7 @@
 
         $(document).ready(function(){
             var eventCode = "[[${Event.eventID}]]";
+            var estimated_num = "[[${Event.estimatedAttendeeNumber}]]";
             //template questions is basically an array of string, corresponded to each question in order
             var template_questions = "[[${templateQuestions}]]";
             var event = new EventSource("/host/updateFeedback?eventCode=" + eventCode);
@@ -143,15 +144,21 @@
                         });
                     });
                     //average mood
-                    average_mood /= feedback.length;
-                    $("#mood").html(average_mood + "/10");
+                    //to ensure accuracy, we won't display the average mood until there are over 10% of the estimiated attendees who have submitted feedback
+                    if(parseInt(feedback.length) < parseFloat(estimated_num) * 0.1){
+                        $("#mood").html("Feedback is insufficient to display an accurate overview of the mood.");
+                        console.log(estimated_num);
+                    }else{
+                        average_mood /= feedback.length;
+                        $("#mood").html(Math.round(average_mood) + "/10");
+                    }
 
                     //at the end of the entire feedback loop, we take the average
                     //calculate average marks for template questions
                     //and display the average marks
                     $(".template_scores").each(function(i){
                         //the template questions are in the correct order as the array elements
-                        $(this).html(average_score[i] /= feedback.length);
+                        $(this).html(Math.round(average_score[i] /= feedback.length));
                     });
                 }
                 

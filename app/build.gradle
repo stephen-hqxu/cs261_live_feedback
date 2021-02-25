@@ -30,8 +30,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'edu.stanford.nlp:stanford-corenlp:4.2.0'
-    compile group: 'edu.stanford.nlp', name: 'stanford-corenlp', version: '4.2.0'
-    compile group: 'edu.stanford.nlp', name: 'stanford-corenlp', version: '4.2.0', classifier: 'models'
+    implementation 'edu.stanford.nlp:stanford-corenlp:4.2.0:models'
     //implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation "org.springframework.boot:spring-boot-starter-jetty"

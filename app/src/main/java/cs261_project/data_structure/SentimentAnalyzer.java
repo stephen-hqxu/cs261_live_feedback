@@ -10,64 +10,53 @@ import edu.stanford.nlp.util.CoreMap;
 
 import java.util.Properties;
 
+public final class SentimentAnalyzer {
+    private static StanfordCoreNLP pipeline;
 
-public class SentimentAnalyzer {
+    //initialised right after the program is started
+    static{
+        Properties props;
+        props = new Properties();
+        props.setProperty("annotators","tokenize,ssplit, parse, sentiment");
+        SentimentAnalyzer.pipeline = new StanfordCoreNLP(props);
+    }
+
+    private SentimentAnalyzer(){
+        //prevent from being instantiated
+    }
 
     // Calculates sentiment numerical value from given text
- private static int findSentiment(String text){
-     Properties props;
-     props = new Properties();
-     props.setProperty("annotators","tokenize,ssplit, parse, sentiment");
-     StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+    private static int findSentiment(String text){
+        int mainSentiment = 0;
 
-     int mainSentiment = 0;
+        //Check against null text
+        if(text != null && text.length() > 0){
 
-     //Check against null text
-     if(text != null && text.length() > 0){
+            int longest = 0;
+            Annotation annotation = pipeline.process(text);
+            for(CoreMap sentence : annotation.get(CoreAnnotations.SentencesAnnotation.class)){
+                Tree tree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
+                int sentiment = RNNCoreAnnotations.getPredictedClass(tree);
+                String partText = sentence.toString();
+                if(partText.length() > longest){
+                    mainSentiment = sentiment;
+                    longest = partText.length();
+                }
+            }
+        }
+        return mainSentiment;
+    }
 
-         int longest = 0;
-         Annotation annotation = pipeline.process(text);
-         for(CoreMap sentence : annotation.get(CoreAnnotations.SentencesAnnotation.class)){
-             Tree tree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
-             int sentiment = RNNCoreAnnotations.getPredictedClass(tree);
-             String partText = sentence.toString();
-             if(partText.length() > longest){
-                 mainSentiment = sentiment;
-                 longest = partText.length();
-             }
-         }
-     }
-     return mainSentiment;
- }
+    /**
+     * Returning the text value of the sentiment. This method should be called to work out sentiment
+     * @param text The string for analysis
+     * @return Return value from 1 to 10 according to the sentiment
+     */
+    public static byte getSentimentType(String text){
+        int sentiment = findSentiment(text);
 
- //Returning the text value of the sentiment. This method should be called to work out sentiment
- public static String getSentimentType(String text){
-
-     String sType;
-     int sentiment = findSentiment(text);
-
-     switch (sentiment){
-         case 0:
-             sType = "Very Negative";
-             break;
-
-         case 1:
-             sType = "Negative";
-             break;
-         case 2:
-             sType = "Neutral";
-             break;
-         case 3:
-             sType="Positive";
-             break;
-         case 4:
-             sType="Very Positive";
-             break;
-         default:
-              sType = "";
-     }
-
-     return  sType;
- }
+        //scale the sentiment from [0,4] to the range [1,10]
+        return (byte)(sentiment * 2.25 + 1);
+    }
 
 }
