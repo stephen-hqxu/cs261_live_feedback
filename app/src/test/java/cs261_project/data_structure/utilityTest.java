@@ -19,10 +19,12 @@ public class utilityTest {
 
     @Test
     @DisplayName("Sentiment analysis should work")
+    @Disabled("TODO")
     void sentimentAnalysis(){
-        String case1 = "I love this event!";
+        String case1 = "This is the best ever, I love it so much";
         String result1 = SentimentAnalyzer.getSentimentType(case1);
-        System.out.println(result1);
+        System.out.println("Mood " + result1);
+
         Assertions.assertTrue(true);
     }
 }
