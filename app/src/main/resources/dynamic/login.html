@@ -15,7 +15,7 @@
         <input name="username" class="w3-input w3-border w3-light-grey w3-center" type="text" placeholder="Enter Username" required> <br>
         
         <label class="w3-text-blue"><b>Password</b></label><br>
-        <input name="password" class="w3-input w3-border w3-light-grey w3-center" type="text" placeholder="Enter Password" required><br>
+        <input name="password" class="w3-input w3-border w3-light-grey w3-center" type="password" placeholder="Enter Password" required><br>
 
         <label for="error" class="w3-text-red" th:style="${error == null ? 'display:none;' : 'display:block;'}"><b th:text="${error}"></b></label><br>
         <button class="w3-btn w3-blue w3-round-xxlarge w3-padding" type="submit">Login</button><br><br>
