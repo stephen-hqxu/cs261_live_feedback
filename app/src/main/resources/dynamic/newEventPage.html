@@ -17,51 +17,61 @@
         <input type="text" class="w3-input w3-border w3-light-grey w3-center" placeholder="Event name" name="eventName" id="eventName" required><br>
 
         <label for="startDate" class="w3-text-blue"><b>Starting date:</b></label><br>
-        <input type="date" class="w3-input w3-border w3-light-grey w3-center" placeholder="YYYY-MM-DD" name="startDate" id="startDate" required><br>
+        <input type="date" class="w3-input w3-border w3-light-grey w3-center" placeholder="DD-MM-YYYY" name="startDate" id="startDate" required><br>
 
         <label for="startTime" class="w3-text-blue"><b>Starting time:</b></label><br>
-        <input type="time" class="w3-input w3-border w3-light-grey w3-center" name="startTime" id="startTime" required><br>
+        <input type="time" class="w3-input w3-border w3-light-grey w3-center" name="startTime" id="startTime" placeholder="HH:mm" required><br>
 
         <label for="endDate" class="w3-text-blue"><b>Ending date:</b></label><br>
-        <input type="date" class="w3-input w3-border w3-light-grey w3-center" placeholder="YYYY-MM-DD" name="endDate" id="endDate" required><br>
+        <input type="date" class="w3-input w3-border w3-light-grey w3-center" placeholder="DD-MM-YYYY" name="endDate" id="endDate" required><br>
 
         <label for="endTime" class="w3-text-blue"><b>Ending time:</b></label><br>
-        <input type="time" class="w3-input w3-border w3-light-grey w3-center" name="endTime" id="endTime" required><br>
+        <input type="time" class="w3-input w3-border w3-light-grey w3-center" name="endTime" id="endTime" placeholder="HH:mm" required><br>
 
         <label for="password" class="w3-text-blue"><b>Set a password for this event:</b></label><br>
         <input type="text" class="w3-input w3-border w3-light-grey w3-center" name="eventPassword" id="password" required><br>
 
-        <label for="attendeesNum" class="w3-text-blue"><b>Estimated number of attendees:</b></label><br>
-        <input type="number" class="w3-input w3-border w3-light-grey w3-center" step="1" min="1" name="estimatedAttendeeNumber" id="estimatedAttendeeNumber" required><br>
+        <label for="estimatedAttendeeNumber" class="w3-text-blue"><b>Estimated number of attendees:</b></label><br>
+        <input type="number" class="w3-input w3-border w3-light-grey w3-center" step="1" min="1" name="estimatedAttendeeNumber" id="estimatedAttendeeNumber" placeholder="0" required><br>
 
-        <button type="submit" class="w3-btn w3-blue w3-round-xxlarge w3-padding" style="width:50%">Create</button>
     </form>
 
     <br>
 
     <!-- Put the div into a form so every customised fields will be posted -->
     <div class="w3-container w3-center">
-        <label class="w3-text-blue"><b>You can also add customised attributes for attendees to rate on a scale of 1 to 10, with 10 being the best:</b></label><br>
+        <label class="w3-text-blue"><b>You can also add customised attributes for attendees to rate on a scale of 1 to 10, with 10 being the best:</b></label><br><br>
         <!-- Please style the attribute thingy -->
         <!-- This item will be duplicated by JS -->
         <div id="attributes_x" class="template_attributes" style="display:none;">
-            <button id="del_attr_x" class="w3-btn w3-blue w3-round-xxlarge w3-padding" onclick='remove_attr(x);'> - </button>
-            <label id="QxLabel" class="w3-text-blue">Question x:</label>
-            <input type="text" class="w3-input w3-border w3-light-grey w3-center" name="QxTitle" id="QxTitle" required><br>
+            <label id="QxLabel" class="w3-text-blue w3-padding">Question x:</label>
+            <input type="text" class="w3-input w3-border w3-light-grey w3-center w3-padding attributeBox" name="QxTitle" id="QxTitle" placeholder="Enter an attribute here" required>
+            <button id="del_attr_x" class="w3-btn w3-white w3-border w3-border-blue w3-round-medium w3-padding" onclick='remove_attr(x);'> - Delete this attribute - </button><br><br>
         </div>
-
-        <button id="add_attr" class="w3-btn w3-blue w3-round-xxlarge w3-padding">+ Add an attribute +</button><br><br>
+        <br>
+        <button id="add_attr" class="w3-btn w3-white w3-border w3-border-blue w3-round-medium w3-padding">+ Add an attribute +</button><br>
     </div>
 
+    <br><br><br>
+
+    <div class="w3-container w3-center">
+    <button id="submitFormButton" type="button" class="w3-btn w3-blue w3-round-xxlarge w3-padding">Create</button>
+    </div>
     <br>
 
-    <form class="w3-container w3-center" method="GET" action="/host/hostHomePage">
+    <form class="w3-container w3-center w3-margin-bottom" method="GET" action="/host/hostHomePage">
 
-        <button type="submit" class="w3-btn w3-blue-grey w3-round-xxlarge w3-padding" style="width:50%">Discard & Go back to menu</button>
+        <button type="submit" class="w3-btn w3-blue-grey w3-round-xxlarge w3-padding">Discard & Go back to menu</button>
 
     </form>
 
     <script>
+
+        $(document).ready(function() {
+            $("#submitFormButton").click(function() {
+                $("#newEventForm").submit();
+            });
+        });
 
         //a record of the number of template question
         var template_count = 1;
@@ -97,6 +107,7 @@
             }
 
             //do not submit if validation fails
+            alert("All the fields must be filled")
             return false;
         });
 
@@ -113,7 +124,7 @@
             var next_remove = next.children('#del_attr_x');
             var next_question = next.children('#QxTitle');
             next_label.prop("id", "Q" + template_count + "Label");
-            next_label.html("Question " + template_count + ":");
+            next_label.html("Attribute " + template_count + ":");
             next_question.prop("id", "Q" + template_count + "Title");
             next_question.prop("name", "Q" + template_count + "Title");
             next_remove.prop("id", "del_attr_" + template_count);
@@ -145,7 +156,7 @@
 
                 //reset the id with the new index
                 $(this).prop("id", "attributes_" + index);
-                curr_label.html("Question " + index + ":");
+                curr_label.html("Attribute " + index + ":");
                 curr_label.prop("id", "Q" + index + "Label");
                 curr_input.prop("id", "Q" + index + "Title");
                 curr_input.prop("name", "Q" + index + "Title");

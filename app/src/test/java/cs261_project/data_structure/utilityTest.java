@@ -13,13 +13,13 @@ import org.junit.jupiter.api.Test;
 public class utilityTest {
     @Test
     @DisplayName("Test should run")
-    public void shouldRunTest(){
+    void shouldRunTest(){
         Assertions.assertEquals("1","1");
     }
 
     @Test
     @DisplayName("Sentiment analysis should work")
-    public void sentimentAnalysis(){
+    void sentimentAnalysis(){
         String case1 = "I love this event!";
         String result1 = SentimentAnalyzer.getSentimentType(case1);
         System.out.println(result1);

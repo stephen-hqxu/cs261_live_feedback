@@ -141,12 +141,15 @@ public final class HostProcessor {
         final DatabaseConnection db = App.getInstance().getDbConnection();
         //render feedback page with event information
         final Event event = db.LookupEvent(Integer.parseInt(eventid));
+        //also fetch template to display to the host
+        final Template template = db.fetchTemplate(Integer.parseInt(eventid));
         if(event == null){
             //event not found
             return "redirect:/host/hostHomePage";
         }
-        model.addAttribute("eventCode", event.getEventID());
-        model.addAttribute("eventName", event.getEventName());
+        model.addAttribute("Event", event);
+        //return an empty JSON array if there is no template
+        model.addAttribute("templateQuestions", (template == null) ? "[]" : template.getQuestions());
 
         return "viewFeedbackPage";
     }

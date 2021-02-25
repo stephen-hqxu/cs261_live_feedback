@@ -17,8 +17,8 @@
 
         <ul id="eventList" class="w3-container w3-ul w3-center">
             <li th:each="events: ${events}">
-                <p th:text="${events.EventID} + '.' + ${events.EventName}">x.XXX</p>
-                <button name="eventCode" th:attr="value=${events.EventID}" type="submit" class="w3-btn w3-blue w3-round-xxlarge w3-padding" style="width:25%">View Details</button>
+                <p th:text="${events.EventName}">XXX</p>
+                <button name="eventCode" th:attr="value=${events.EventID}" type="submit" class="w3-btn w3-blue w3-round-xxlarge w3-padding">View Details</button>
             </li>
         </ul>
 
@@ -28,9 +28,9 @@
 
     <br>
 
-    <form class="w3-container w3-center" method="GET" action="/host/hostHomePage">
+    <form class="w3-container w3-center w3-padding" method="GET" action="/host/hostHomePage">
 
-        <button type="submit" class="w3-btn w3-blue-grey w3-round-xxlarge w3-padding" style="width:50%">Go back to menu</button>
+        <button type="submit" class="w3-btn w3-blue-grey w3-round-xxlarge w3-padding">Go back to menu</button>
 
     </form>
 

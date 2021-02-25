@@ -8,48 +8,153 @@
 
     <div class="w3-container w3-center w3-large w3-indigo">
         <div>
-            <h1 id="title" th:text="${eventCode} + '::' + ${eventName}"></h1><br>
+            <h1 id="title" th:text="${Event.eventName}"></h1><br>
+
+            <h2 th:text="'Event Code: ' + ${Event.eventID}"></h2>
+            <h2 th:text="'Event Password: ' + ${Event.eventPassword}"></h2><br>
+            
             <h2>Here are the feedback:</h2>
         </div>
     </div>
 
     <br>
 
-    <div class="w3-container w3-center w3-large" style="width:75%; height:40vh">
-        <div id="feedbackBox" >
-            <!-- TODO print template answers -->
-            <h1 id="updateTest"></h1>
-        </div>
+    <div id="feedbackContainer" class="w3-container w3-center w3-large" style="width:95vw; height:30vh; text-align:center; overflow:scroll;">
+
+        <!-- Feedback will be printed by JS here -->
+
     </div>
+
+    <h2 class="w3-container w3-center w3-large w3-indigo">Here are the scores for each of your customised questions:</h2>
+
+    <div id="templateContainer" class="w3-container w3-center w3-large" style="width:95vw; text-align:center; height:30vh; overflow:scroll;">
+
+        <!-- Template questions will be printed by JS here -->
+        <hr id="templateEnd">
+
+    </div>
+
+    <!-- This is a template for the feedback table, format it to make it looks amazing -->
+    <ul class="w3-container w3-ul w3-center" id="feedbackBox_template" hidden>
+        <li id="name_x">Name</li>
+        <li id="feedback_x">Feedback</li>
+        <li id="additionalInformation_x">Info</li>
+    </ul>
+    <!-- This is a template for the template answers table -->
+    <ul class="w3-container w3-ul w3-center" id="templateBox_template" hidden>
+        <li id="question_x">Question Titile</li>
+        <!-- I think I will just give an average mark for each question -->
+        <li class="template_scores_template" id="score_x">Score</li>
+    </ul>
 
     <br>
 
     <div class="w3-container w3-center w3-medium w3-border">
         <h2>Average mood:</h2>
-        <p id="mood">-100/10</p>
+        <p id="mood">0/10</p>
     </div>
 
     <br>
 
-    <form class="w3-container w3-center" method="GET" action="/host/eventsPage">
+    <form class="w3-container w3-center w3-margin-bottom" method="GET" action="/host/eventsPage">
 
-        <button type="submit" class="w3-btn w3-blue-grey w3-round-xxlarge w3-padding" style="width:50%">Back to my events</button>
+        <button type="submit" class="w3-btn w3-blue-grey w3-round-xxlarge w3-padding">Back to my events</button>
 
     </form>
 
     <script>
 
         $(document).ready(function(){
-            var eventCode = "[[${eventCode}]]";
+            var eventCode = "[[${Event.eventID}]]";
+            //template questions is basically an array of string, corresponded to each question in order
+            var template_questions = "[[${templateQuestions}]]";
             var event = new EventSource("/host/updateFeedback?eventCode=" + eventCode);
 
+            //print template questions
+            {   
+                //as Thymeleaf replaces quotes to HTML value automatically, we need to cast it back
+                //possible broken, if the template or feedback contains quotation marks, everything will be broken
+                template_questions = JSON.parse(template_questions.replaceAll("&quot;", "\""));
+                if(template_questions.length == 0){
+                    //no template, tell user they don't have template
+                    $("<p>").html("You don't have any customised attributes").appendTo("#templateEnd");
+                }else{
+                    $.each(template_questions, function(i, v){
+                        var templateBox = $("#templateBox_template").clone().prop("id", "templateBox_" + i).prop("hidden", false);
+                        var templateQuestion = templateBox.children("#question_x").prop("id", "question_" + i);
+                        templateBox.children("#score_x").prop("id", "score_" + i).prop("class", "template_scores").html("N/A");
+                        //modify values
+                        templateQuestion.html(v.title);
+                        //insert
+                        templateBox.insertBefore("#templateEnd");
+                    });
+                }
+                
+            }
+
+            //SSE functions begin here
+
             event.onpen = function(e){
-                //clear all old data
+                //clear
+                $("#feedbackContainer").html("");
             };
 
             event.onmessage = function(e){
-                //print new data
-                $("#updateTest").html(e.data);
+                //convert to object
+                //format: array of feedback objects
+                var feedback = JSON.parse(e.data);
+                //the average score for each template question
+                var average_score = new Array(template_questions.length).fill(0);
+                var average_mood = parseInt(0);
+
+                //clear old data
+                //setup a flag for insertion
+                $("#feedbackContainer").html("<hr id='feedbackEnd'>");
+                if(feedback.length == 0){
+                    //no feedback
+                    $("<p>").html("No feedback has been submitted yet.").appendTo("#feedbackEnd");
+                }else{
+                    //loop through each feedback
+                    $.each(feedback, function(i, v){
+                        //i: index, v: value
+                        //get the answer for the template questions
+                        //answer is an array of score for respective question
+                        var template_answers = JSON.parse(v.answer);
+
+                        //start printing feedback table
+                        var feedbackBox = $("#feedbackBox_template").clone().prop("id", "feedbackBox_" + i).prop("hidden", false);
+                        var feedback_name = feedbackBox.children("#name_x").prop("id", "name_" + i);
+                        var feedback_content = feedbackBox.children("#feedback_x").prop("id", "feedback_" + i);
+                        var feedback_info = feedbackBox.children("#additionalInformation_x").prop("id", "additionalInformation_" + i);
+                        //modify values
+                        feedback_name.html("Feedback " + (i + 1) + ". " + (v.attendeeName == "" ? "(Anomalous)" : v.attendeeName));
+                        feedback_content.html(v.feedback);
+                        feedback_info.html(v.additionalInformation);
+                        //insert
+                        feedbackBox.insertBefore($("#feedbackEnd"));
+
+                        //calculating sum of mood
+                        average_mood += parseInt(v.mood);
+
+                        //calculate average marks for template questions
+                        $.each(template_answers, function(i_t, v_t){
+                            //first we add them up
+                            average_score[i_t] += parseInt(v_t);
+                        });
+                    });
+                    //average mood
+                    average_mood /= feedback.length;
+                    $("#mood").html(average_mood + "/10");
+
+                    //at the end of the entire feedback loop, we take the average
+                    //calculate average marks for template questions
+                    //and display the average marks
+                    $(".template_scores").each(function(i){
+                        //the template questions are in the correct order as the array elements
+                        $(this).html(average_score[i] /= feedback.length);
+                    });
+                }
+                
             };
 
             event.onerror = function(e){
