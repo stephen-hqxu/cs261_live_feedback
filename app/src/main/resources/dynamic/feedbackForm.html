@@ -14,16 +14,16 @@
 
     <form class="w3-container w3-center" method="POST" id="feedbackForm" action="/attendee/submitFeedback">
 
-        <label for="name" class="w3-text-blue"><b>Your name (Optional)</b></label><br>
+        <label for="name" class="w3-text-blue"><b>Your name. (Optional)</b></label><br>
         <input type="text" class="w3-input w3-border w3-light-grey w3-center" placeholder="Enter your name here" name="attendeeName" id="attendeeName"><br>
 
-        <label for="feedback" class="w3-text-blue"><b>Feedback</b></label><br>
+        <label for="feedback" class="w3-text-blue"><b>Feedback. (Required)</b></label><br>
         <input type="text" class="w3-input w3-border w3-light-grey w3-center" placeholder="Write feedback here" name="feedback" id="feedback" required><br>
 
-        <label for="mood" class="w3-text-blue"><b>Your mood on a scale of 1 to 10, with 10 being the happiest.</b></label><br>
+        <label for="mood" class="w3-text-blue"><b>Your mood during the event on a scale of 1 to 10, with 10 being the happiest. (Required)</b></label><br>
         <input type="number" class="w3-input w3-border w3-light-grey w3-center" name="mood" id="mood" step="1" min="1" max="10" placeholder="10" required><br>
 
-        <label for="info" class="w3-text-blue"><b>Additional information (Optional)</b></label><br>
+        <label for="info" class="w3-text-blue"><b>Additional information. (Optional)</b></label><br>
         <input type="text" class="w3-input w3-border w3-light-grey w3-center" name="additionalInformation" id="additionalInformation"><br>
 
         <label class="w3-text-blue" th:style="${question} == null ? 'display:none;' : 'display:block;'"><b>How would you rate the following on a scale of 1 to 10, with 10 being the best?</b></label><br>
