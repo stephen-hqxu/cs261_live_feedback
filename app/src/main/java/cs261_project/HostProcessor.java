@@ -1,6 +1,8 @@
 package cs261_project;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -79,33 +81,43 @@ public final class HostProcessor {
             model.addAttribute("error", "You don't have any event yet. Create one now!");
         }
         model.addAttribute("events", events);
+        model.addAttribute("current_time", LocalDateTime.now());
 
         return "eventsPage";
     }
 
     @PostMapping("/newEvent")
-    public final String handleNewEvent(Event event, @RequestParam() Map<String, String> args, HttpSession session){
+    public final String handleNewEvent(Event event, @RequestParam() Map<String, String> args, HttpSession session, Model model){
         final Object hostid = session.getAttribute("HostID");
         if(hostid == null){
             return "redirect:/loginPage";
         }
 
         final DatabaseConnection db = App.getInstance().getDbConnection();
-        //parsing datetime
-        //start
-        //TODO Catch dataTimeException
-        //TODO Check startDate > finishDate
-        String datetime = args.get("startDate").toString() + " " + args.get("startTime").toString();
-        event.setStartDateTime(Event.StringToTempo(datetime));
-        //finish
-        datetime = args.get("endDate").toString() + " " + args.get("endTime").toString();
-        event.setFinishDateTime(Event.StringToTempo(datetime));
-        event.setHostID(Integer.parseInt(hostid.toString()));
+        try{
+            //parsing datetime
+            //start
+            String datetime = args.get("startDate").toString() + " " + args.get("startTime").toString();
+            event.setStartDateTime(Event.StringToTempo(datetime));
+            //finish
+            datetime = args.get("endDate").toString() + " " + args.get("endTime").toString();
+            event.setFinishDateTime(Event.StringToTempo(datetime));
+            event.setHostID(Integer.parseInt(hostid.toString()));
+
+            //make sure start time happens before finish time
+            if(event.getStartDateTime().compareTo(event.getFinishDateTime()) > 0){
+                model.addAttribute("error", "Start time must go before finish time.");
+                return "newEventPage";
+            }
+        }catch(DateTimeParseException dtpe){
+            model.addAttribute("error", "Invalid date time input.");
+            return "newEventPage";
+        }
 
         final int eventid = db.newEvent(event);
         if(eventid == -1){
             //event creation failed, stay at the current page
-            return "newEventPage";
+            return "redirect:/newEventPage";
         }
         event.setEventID(eventid);
 
@@ -122,7 +134,7 @@ public final class HostProcessor {
             final boolean status = db.createTemplate(template);
             if(!status){
                 //template creation failed
-                return "newEventPage";
+                return "redirect:/newEventPage";
             }
         }
 
@@ -150,6 +162,8 @@ public final class HostProcessor {
             return "redirect:/host/hostHomePage";
         }
         model.addAttribute("Event", event);
+        model.addAttribute("StartDateTime", Event.TempoToString(event.getStartDateTime()));
+        model.addAttribute("FinishDateTime", Event.TempoToString(event.getFinishDateTime()));
         //return an empty JSON array if there is no template
         model.addAttribute("templateQuestions", (template == null) ? "[]" : template.getQuestions());
 

@@ -8,8 +8,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.format.Formatter;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
@@ -19,16 +19,22 @@ import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
+import cs261_project.data_structure.Event;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+
+import com.google.protobuf.TextFormat.ParseException;
 
 /**
  * Configuration class for web application
  * @author Group 12 - Stephen Xu, JuanYan Huo, Ellen Tatum, JiaQi Lv, Alexander Odewale
  */
 @Configuration
-@EnableWebMvc
 @ComponentScan
 public class AppConfiguration implements WebMvcConfigurer, ApplicationContextAware {
     //application
@@ -47,14 +53,34 @@ public class AppConfiguration implements WebMvcConfigurer, ApplicationContextAwa
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         WebMvcConfigurer.super.addResourceHandlers(registry);
         //in the resources folder
-        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/staic/");
+        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
         registry.addResourceHandler("/image/**").addResourceLocations("classpath:/image/");
     }
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
         WebMvcConfigurer.super.addFormatters(registry);
-        //TODO, more formatters will be added later
+
+        //format the datetime using the style given in the Event class
+        registry.addFormatter(new Formatter<LocalDateTime>(){
+            @Override
+            public LocalDateTime parse(String text, Locale locale) {
+                try{
+                    return Event.StringToTempo(text);
+                }catch(DateTimeParseException dtpe){
+                    throw dtpe;
+                }
+            }
+
+            @Override
+            public String print(LocalDateTime datetime, Locale locale) {
+                try{
+                    return Event.TempoToString(datetime);
+                }catch(DateTimeParseException dtpe){
+                    throw dtpe;
+                }
+            }
+        });
     }
 
     @Bean

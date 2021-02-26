@@ -2,6 +2,7 @@ package cs261_project;
 
 import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -25,6 +26,17 @@ public class IndexProcessor {
     //Server port number
     @Value("${server.port}")
     private String PORT;
+
+    //flags
+    /**
+     * A list of returned flag to indicate error and print message to the webpage
+     * @author Group 12 - Stephen Xu, JuanYan Huo, Ellen Tatum, JiaQi Lv, Alexander Odewale
+     */
+    private static enum ErrorFlag{
+        INCORRECT_USERNAME_PASSWORD,
+        DUPLICATE_USERNAME,
+        INCORRECT_EVENTCODE_PASSWORD;
+    }
     
     public IndexProcessor(){
 
@@ -41,12 +53,16 @@ public class IndexProcessor {
     }
 
     @GetMapping("/loginPage")
-    public final String serveLogin(){
+    public final String serveLogin(@RequestParam("error") @Nullable ErrorFlag error, Model model){
+        if(error == ErrorFlag.INCORRECT_USERNAME_PASSWORD){
+            //inform user about the incorrect username or password
+            model.addAttribute("error", "Incorrect username or password, please try again.");
+        }
         return "login";
     }
 
     @PostMapping("/login")
-    public final String handleLogin(@RequestParam() Map<String, String> args, HttpServletRequest request, HttpSession session, Model model) {
+    public final String handleLogin(@RequestParam() Map<String, String> args, HttpServletRequest request, HttpSession session) {
         final DatabaseConnection db = App.getInstance().getDbConnection();
         final String username = args.get("username").toString();
         final String password = args.get("password").toString();
@@ -55,8 +71,7 @@ public class IndexProcessor {
 
         //if username or password are incorrect
         if(user == null){
-            model.addAttribute("error", "Incorrect username or password, please try again.");
-            return "login";
+            return "redirect:/loginPage?error=" + ErrorFlag.INCORRECT_USERNAME_PASSWORD.toString();
         }
         //create a new session
         session = request.getSession();
@@ -70,41 +85,46 @@ public class IndexProcessor {
     }
 
     @GetMapping("/registerPage")
-    public final String serveRegister(){
+    public final String serveRegister(@RequestParam("error") @Nullable ErrorFlag error, Model model){
+        if(error == ErrorFlag.DUPLICATE_USERNAME){
+            //inform user that the username has been used
+            model.addAttribute("error", "Username already exists, Please choose another username.");
+        }
         return "register";
     }
 
     @PostMapping("/register")
-    public final String handleRegister(HostUser user, Model model){
+    public final String handleRegister(HostUser user){
         final DatabaseConnection db = App.getInstance().getDbConnection();
 
         final boolean status = db.RegisterHost(user);
         if(!status){
             //tell user about their error
-            model.addAttribute("error", "Username already exists, Please choose another username.");
-            return "register";
+            return "redirect:/registerPage?error=" + ErrorFlag.DUPLICATE_USERNAME.toString();
         }
 
         return "redirect:/loginPage";
     }
 
     @GetMapping("/joinEventPage")
-    public final String serveJoinEvent(){
+    public final String serveJoinEvent(@RequestParam("error") @Nullable ErrorFlag error, Model model){
+        if(error == ErrorFlag.INCORRECT_EVENTCODE_PASSWORD){
+            //event code or password are incorrect, inform user
+            model.addAttribute("error", "Incorrect event code or password, please try again.");
+        }
         return "joinEvent";
     }
 
 
     @PostMapping("/joinEvent")
-    public final String handleJoinEvent(@RequestParam() Map<String, String> args, Model model, HttpServletRequest request, HttpSession session) {
+    public final String handleJoinEvent(@RequestParam() Map<String, String> args, HttpServletRequest request, HttpSession session) {
         final DatabaseConnection db = App.getInstance().getDbConnection();
         final String eventCode = args.get("eventCode").toString();
         final String eventPassword = args.get("eventPassword").toString();
 
         final Event event = db.LookupEvent(eventCode, eventPassword);
         if(event == null){
-            //event code or password are incorrect, inform user
-            model.addAttribute("error", "Incorrect event code or password, please try again.");
-            return "joinEvent";
+            return "redirect:/joinEventPage?error=" + ErrorFlag.INCORRECT_EVENTCODE_PASSWORD.toString();
         }
         //create a session
         session = request.getSession();

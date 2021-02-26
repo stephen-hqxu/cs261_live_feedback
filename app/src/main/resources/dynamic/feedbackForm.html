@@ -30,6 +30,7 @@
 
         <button type="submit" id="feedback_submit" class="w3-btn w3-blue w3-round-xxlarge w3-padding">Submit feedback</button><br>
 
+        <label for="error_th" class="w3-text-red" th:style="${error == null ? 'display:none;' : 'display:block;'}"><b th:text="${error}"></b></label>
         <label for="error" id="error" class="w3-text-red" hidden></label>
 
     </form>

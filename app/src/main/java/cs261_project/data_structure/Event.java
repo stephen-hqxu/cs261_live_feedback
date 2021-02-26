@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 import org.springframework.jdbc.core.RowMapper;
 
@@ -60,8 +61,12 @@ public class Event {
      * @return Date time object
      * @see LocalDateTime
      */
-    public static LocalDateTime StringToTempo(String datetime){
-        return LocalDateTime.parse(datetime, Event.EVENTDATETIME_FORMATTER);
+    public static LocalDateTime StringToTempo(String datetime) throws DateTimeParseException{
+        try{
+            return LocalDateTime.parse(datetime, Event.EVENTDATETIME_FORMATTER);
+        }catch(DateTimeParseException dtpe){
+            throw dtpe;
+        }
     }
 
     public void setEventID(int id){

@@ -10,7 +10,7 @@
         <h1 id="title" th:text="${Event.eventName}"></h1>
         <h2 th:text="'Event Code: ' + ${Event.eventID}"></h2>
         <h2 th:text="'Event Password: ' + ${Event.eventPassword}"></h2>
-        <p>Starting time: YYYY-MM-DD HH:MM.    Finishing time: YYYY-MM-DD HH:MM.</p>
+        <p th:text="'Starting time: ' + ${{Event.StartDateTime}} + ', Finishing time:' + ${{Event.FinishDateTime}}"></p>
     </div>
     <br>
 
@@ -36,14 +36,14 @@
     </div>
 
     <!-- This is a template for the feedback table, format it to make it looks amazing -->
-    <ul class="w3-container w3-ul w3-center w3-card" id="feedbackBox_template" style="text-align: center; margin: auto;" hidden>
+    <ul class="event_feedback w3-container w3-ul w3-center w3-card" id="feedbackBox_template" style="text-align: center; margin: auto;" hidden>
         <li id="name_x">Name</li>
         <li id="feedback_x">Feedback</li>
         <li id="additionalInformation_x">Info</li>
     </ul>
     <br>
     <!-- This is a template for the template answers table -->
-    <ul class="w3-container w3-ul w3-center w3-card" id="templateBox_template" style="text-align: center; margin: auto;" hidden>
+    <ul class="template_questions w3-container w3-ul w3-center w3-card" id="templateBox_template" style="text-align: center; margin: auto;" hidden>
         <li id="question_x">Question Titile</li>
         <!-- I think I will just give an average mark for each question -->
         <li class="template_scores_template" id="score_x">Score</li>
@@ -72,9 +72,7 @@
             //template questions is basically an array of string, corresponded to each question in order
             var template_questions = "[[${templateQuestions}]]";
             var event = new EventSource("/host/updateFeedback?eventCode=" + eventCode);
-            var colour = 0;
-
-
+            
             //print template questions
             {   
                 //as Thymeleaf replaces quotes to HTML value automatically, we need to cast it back
@@ -90,14 +88,7 @@
                         templateBox.children("#score_x").prop("id", "score_" + i).prop("class", "template_scores").html("N/A");
                         //modify values
                         templateQuestion.html(v.title);
-                        //apply colour
-                        if (colour == 0) {
-                            templateQuestion.css("background-color","rgb(128, 191, 255)");
-                            colour = 1;
-                        } else {
-                            templateQuestion.css("background-color","rgb(204, 230, 255)");
-                            colour = 0;
-                        }
+                        
                         //insert
                         templateBox.insertBefore("#templateEnd");
                     });
@@ -119,7 +110,7 @@
                 //the average score for each template question
                 var average_score = new Array(template_questions.length).fill(0);
                 var average_mood = parseInt(0);
-                var colour = 0;
+
                 //clear old data
                 //setup a flag for insertion
                 $("#feedbackContainer").html("<hr id='feedbackEnd'>");
@@ -143,18 +134,6 @@
                         feedback_name.html("Name: " + (v.attendeeName == "" ? "(Anonymous)" : v.attendeeName));
                         feedback_content.html("Feedback: " + v.feedback);
                         feedback_info.html(v.additionalInformation);
-                        //apply colour
-                        if (colour == 1) {
-                            feedback_name.css("background-color","rgb(128, 191, 255)");
-                            feedback_content.css("background-color","rgb(128, 191, 255)");
-                            feedback_info.css("background-color","rgb(128, 191, 255)");
-                            colour = 0;
-                        } else {
-                            feedback_name.css("background-color","rgb(204, 230, 255)");
-                            feedback_content.css("background-color","rgb(204, 230, 255)");
-                            feedback_info.css("background-color","rgb(204, 230, 255)");
-                            colour = 1;
-                        }
 
                         //insert
                         feedbackBox.insertBefore($("#feedbackEnd"));

@@ -40,6 +40,8 @@
 
     <!-- Put the div into a form so every customised fields will be posted -->
     <div class="w3-container w3-center">
+        <label for="error" class="w3-text-red" th:style="${error == null ? 'display:none;' : 'display:block;'}"><b th:text="${error}"></b></label>
+
         <label class="w3-text-blue"><b>You can also add customised attributes for attendees to rate on a scale of 1 to 10, with 10 being the best:</b></label><br><br>
         <!-- Please style the attribute thingy -->
         <!-- This item will be duplicated by JS -->
@@ -55,7 +57,7 @@
     <br><br><br>
 
     <div class="w3-container w3-center">
-    <button id="submitFormButton" type="button" class="w3-btn w3-blue w3-round-xxlarge w3-padding">Create</button>
+        <button id="submitFormButton" type="button" class="w3-btn w3-blue w3-round-xxlarge w3-padding">Create</button>
     </div>
     <br>
 
