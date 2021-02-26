@@ -93,6 +93,8 @@ public final class HostProcessor {
         final DatabaseConnection db = App.getInstance().getDbConnection();
         //parsing datetime
         //start
+        //TODO Catch dataTimeException
+        //TODO Check startDate > finishDate
         String datetime = args.get("startDate").toString() + " " + args.get("startTime").toString();
         event.setStartDateTime(Event.StringToTempo(datetime));
         //finish
