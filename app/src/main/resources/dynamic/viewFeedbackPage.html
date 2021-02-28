@@ -6,33 +6,45 @@
 </head>
 <body>
 
-    <div class="w3-container w3-center w3-large w3-indigo">
-        <h1 id="title" th:text="${Event.eventName}"></h1>
-        <h2 th:text="'Event Code: ' + ${Event.eventID}"></h2>
-        <h2 th:text="'Event Password: ' + ${Event.eventPassword}"></h2>
-        <p th:text="'Starting time: ' + ${{Event.StartDateTime}} + ', Finishing time:' + ${{Event.FinishDateTime}}"></p>
+    <div class="w3-row w3-border w3-indigo">
+        <div class="w3-container w3-half w3-center">
+            <h1 id="title" th:text="${Event.eventName}"></h1>
+        </div>
+        <div class="w3-container w3-half w3-center">
+            <h2 th:text="'Event Code: ' + ${Event.eventID}"></h2>
+            <h2 th:text="'Event Password: ' + ${Event.eventPassword}"></h2>
+            <p th:text="'Starting time: ' + ${{Event.StartDateTime}}"></p>
+            <p th:text="'Finishing time: ' + ${{Event.FinishDateTime}}"></p>
+        </div>
     </div>
+
     <br>
 
-    <div class="w3-container w3-center w3-medium w3-indigo">
-        <h3>Here are the feedback for this event:</h3>
-    </div>
+    <div class="w3-row w3-border">
+        <div class="w3-container w3-twothird w3-center">
+            <div class="w3-container w3-center w3-medium w3-indigo">
+                <h3>Here are the feedback for this event:</h3>
+            </div>
 
-    <div id="feedbackContainer" class="w3-container w3-center w3-large" style="width:75vw; height:30vh; text-align: center; margin: auto; overflow:scroll;">
+            <div id="feedbackContainer" class="w3-container w3-center w3-large" style="height:50vh; text-align: center; margin: auto; overflow:scroll;">
 
-        <!-- Feedback will be printed by JS here -->
+                <!-- Feedback will be printed by JS here -->
 
-    </div>
+            </div>
+        </div>
+        <div class="w3-container w3-third w3-center">
+            <div class="w3-container w3-center w3-medium w3-indigo">
+                <h3>Here are the average scores for each of your customised attributes:</h3>
+            </div>
 
-    <div class="w3-container w3-center w3-medium w3-indigo">
-        <h3>Here are the average scores for each of your customised attributes:</h3>
-    </div>
+            <div id="templateContainer" class="w3-container w3-center w3-large" style="height:50vh; text-align: center; margin: auto; overflow:scroll;">
 
-    <div id="templateContainer" class="w3-container w3-center w3-large" style="width:75vw; height:30vh; text-align: center; margin: auto; overflow:scroll;">
+                <!-- Template questions will be printed by JS here -->
+                <hr id="templateEnd">
 
-        <!-- Template questions will be printed by JS here -->
-        <hr id="templateEnd">
+            </div>
 
+        </div>
     </div>
 
     <!-- This is a template for the feedback table, format it to make it looks amazing -->
@@ -53,7 +65,7 @@
 
     <div class="w3-container w3-center w3-medium">
         <h2 class = "w3-indigo">Average mood rating:</h2>
-        <p id="mood">No feedback has been received.</p>
+        <h2 id="mood" style="font-weight: bold">No feedback has been received.</h2>
     </div>
 
     <br>
