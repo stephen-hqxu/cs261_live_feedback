@@ -23,7 +23,7 @@
     <div class="w3-row w3-border">
         <div class="w3-container w3-twothird w3-center">
             <div class="w3-container w3-center w3-medium w3-indigo">
-                <h3>Here are the feedback for this event:</h3>
+                <h3>Feedback:</h3>
             </div>
 
             <div id="feedbackContainer" class="w3-container w3-center w3-large" style="height:50vh; text-align: center; margin: auto; overflow:scroll;">
@@ -34,7 +34,7 @@
         </div>
         <div class="w3-container w3-third w3-center">
             <div class="w3-container w3-center w3-medium w3-indigo">
-                <h3>Here are the average scores for each of your customised attributes:</h3>
+                <h3>Customised attributes:</h3>
             </div>
 
             <div id="templateContainer" class="w3-container w3-center w3-large" style="height:50vh; text-align: center; margin: auto; overflow:scroll;">
@@ -48,14 +48,14 @@
     </div>
 
     <!-- This is a template for the feedback table, format it to make it looks amazing -->
-    <ul class="event_feedback w3-container w3-ul w3-center w3-card" id="feedbackBox_template" style="text-align: center; margin: auto;" hidden>
+    <ul class="event_feedback w3-large w3-ul w3-left-align " id="feedbackBox_template" style="text-align: center; margin: auto; overflow-wrap: break-word;" hidden>
         <li id="name_x">Name</li>
         <li id="feedback_x">Feedback</li>
         <li id="additionalInformation_x">Info</li>
     </ul>
     <br>
     <!-- This is a template for the template answers table -->
-    <ul class="template_questions w3-container w3-ul w3-center w3-card" id="templateBox_template" style="text-align: center; margin: auto;" hidden>
+    <ul class="template_questions w3-large w3-ul w3-center " id="templateBox_template" style="text-align: center; margin: auto; overflow-wrap: break-word;" hidden>
         <li id="question_x">Question Titile</li>
         <!-- I think I will just give an average mark for each question -->
         <li class="template_scores_template" id="score_x">Score</li>
@@ -99,7 +99,7 @@
                         var templateQuestion = templateBox.children("#question_x").prop("id", "question_" + i);
                         templateBox.children("#score_x").prop("id", "score_" + i).prop("class", "template_scores").html("N/A");
                         //modify values
-                        templateQuestion.html(v.title);
+                        templateQuestion.html(v.title + ": ");
                         
                         //insert
                         templateBox.insertBefore("#templateEnd");
@@ -159,6 +159,11 @@
                             average_score[i_t] += parseInt(v_t);
                         });
                     });
+
+                    //Scroll to the bottom to show the new feedback
+                    var objDiv = document.getElementById("feedbackContainer");
+                    objDiv.scrollTop = objDiv.scrollHeight;
+                    
                     //average mood
                     //to ensure accuracy, we won't display the average mood until there are over 10% of the estimated attendees who have submitted feedback
                     if(parseInt(feedback.length) < parseFloat(estimated_num) * 0.1){
@@ -184,6 +189,7 @@
                 //print some error message
             };
         });
+
 
     </script>
 
