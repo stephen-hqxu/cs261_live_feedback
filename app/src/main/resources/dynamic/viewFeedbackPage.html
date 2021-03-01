@@ -22,7 +22,7 @@
 
     <div class="w3-row w3-border">
         <div class="w3-container w3-twothird w3-center">
-            <div class="w3-container w3-center w3-medium w3-indigo">
+            <div class="w3-container w3-center w3-medium w3-blue">
                 <h3>Feedback:</h3>
             </div>
 
@@ -33,7 +33,7 @@
             </div>
         </div>
         <div class="w3-container w3-third w3-center">
-            <div class="w3-container w3-center w3-medium w3-indigo">
+            <div class="w3-container w3-center w3-medium w3-blue">
                 <h3>Customised attributes:</h3>
             </div>
 
@@ -64,7 +64,7 @@
     <br>
 
     <div class="w3-container w3-center w3-medium">
-        <h2 class = "w3-indigo">Average mood rating:</h2>
+        <h2 class = "w3-blue">Average mood rating:</h2>
         <h2 id="mood" style="font-weight: bold">No feedback has been received.</h2>
     </div>
 
@@ -103,7 +103,7 @@
                         var templateQuestion = templateBox.children("#question_x").prop("id", "question_" + i);
                         templateBox.children("#score_x").prop("id", "score_" + i).prop("class", "template_scores").html("N/A");
                         //modify values
-                        templateQuestion.html(v.title + ": ");
+                        templateQuestion.html((v.title + ": ").bold());
                         
                         //insert
                         templateBox.insertBefore("#templateEnd");
@@ -147,8 +147,8 @@
                         var feedback_content = feedbackBox.children("#feedback_x").prop("id", "feedback_" + i);
                         var feedback_info = feedbackBox.children("#additionalInformation_x").prop("id", "additionalInformation_" + i);
                         //modify values
-                        feedback_name.html("Name: " + (v.attendeeName == "" ? "(Anonymous)" : v.attendeeName));
-                        feedback_content.html("Feedback: " + v.feedback);
+                        feedback_name.html("Name: ".bold() + (v.attendeeName == "" ? "(Anonymous)" : v.attendeeName));
+                        feedback_content.html("Feedback: ".bold() + v.feedback);
                         feedback_info.html(v.additionalInformation);
 
                         //insert
