@@ -1,11 +1,13 @@
-package cs261_project;
+package cs261_project.controller;
 
+import java.net.URLEncoder;
 import java.util.Map;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.eclipse.jetty.util.UrlEncoded;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import cs261_project.*;
 import cs261_project.data_structure.*;
 
 /**
@@ -40,6 +43,21 @@ public class IndexProcessor {
     
     public IndexProcessor(){
 
+    }
+
+    /**
+     * Rendering the redirect page with provided message
+     * @param message Message to render
+     * @param dest The destination after timeout
+     * @param model Model object to put the message
+     * @return The view
+     */
+    static String renderRedirect(String message, String dest, final Model model){
+        //rendering redirect page
+        model.addAttribute("message", message);
+        model.addAttribute("destination", dest);
+
+        return "redirect";
     }
 
     @GetMapping("/")
@@ -94,7 +112,7 @@ public class IndexProcessor {
     }
 
     @PostMapping("/register")
-    public final String handleRegister(HostUser user){
+    public final String handleRegister(HostUser user, Model model){
         final DatabaseConnection db = App.getInstance().getDbConnection();
 
         final boolean status = db.RegisterHost(user);
@@ -103,7 +121,10 @@ public class IndexProcessor {
             return "redirect:/registerPage?error=" + ErrorFlag.DUPLICATE_USERNAME.toString();
         }
 
-        return "redirect:/loginPage";
+        return IndexProcessor.renderRedirect(
+            "Thanks for registering with us. We are redirecting you to the login page...", 
+            "/loginPage", 
+            model);
     }
 
     @GetMapping("/joinEventPage")

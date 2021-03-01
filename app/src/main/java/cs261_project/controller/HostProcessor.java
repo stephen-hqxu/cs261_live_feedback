@@ -1,4 +1,4 @@
-package cs261_project;
+package cs261_project.controller;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import cs261_project.*;
 import cs261_project.data_structure.*;
 
 /**
@@ -138,8 +139,11 @@ public final class HostProcessor {
             }
         }
 
-        //so far so good, redirect user  back to home page
-        return "redirect:/host/hostHomePage";
+        //so far so good, redirect user back to home page
+        return IndexProcessor.renderRedirect(
+            "Your new event has been created. Redirecting back to home page...", 
+            "/host/hostHomePage", 
+            model);
     }
 
     @GetMapping("/viewFeedback")

@@ -1,4 +1,4 @@
-package cs261_project;
+package cs261_project.controller;
 
 import java.util.Base64;
 
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import cs261_project.*;
 import cs261_project.data_structure.*;
 
 /**
@@ -67,7 +68,7 @@ public final class AttendeeProcessor {
     }
 
     @PostMapping("/submitFeedback")
-    public String processFeedback(Feedback feedback, HttpSession session){
+    public String processFeedback(Feedback feedback, HttpSession session, Model model){
         final Object eventid = session.getAttribute("EventID");
         //if no active event has found
         if(eventid == null){
@@ -94,7 +95,11 @@ public final class AttendeeProcessor {
 
         //after the feedback has been submitted, we should automatically make them leave the event
         //since we are not asking attendees to submit multiple feedback
-        return "redirect:/attendee/leaveEvent";
+        return IndexProcessor.renderRedirect(
+            "Thank you, we have received your valuable feedback. Redirecting back to index page...", 
+            "/attendee/leaveEvent", 
+            model);
+        
     }
 
     @GetMapping("/leaveEvent")

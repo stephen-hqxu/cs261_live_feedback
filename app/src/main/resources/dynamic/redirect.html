@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en"></html>
+<head>
+    <div th:replace="../static/heading.html"></div>
+    <title>Redirecting...</title>
+</head>
+<body>
+
+    <h1 class="w3-text-blue w3-center" th:text="${message}">Mumbo Jumbo</h1>
+
+    <script>
+
+        const dest = "[[${destination}]]";
+
+        $(document).ready(function(){
+            window.setTimeout(function(){
+                //redirect to dest after 3000ms
+                $(location).attr('href', dest);
+            }, 3000);
+        });
+
+    </script>
+
+</body>
+</html>
