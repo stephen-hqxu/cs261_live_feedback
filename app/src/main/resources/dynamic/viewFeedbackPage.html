@@ -78,12 +78,16 @@
 
     <script>
 
+        //Stores the total number of feedback received so far
+        var totalFeedbackNum;
+
         $(document).ready(function(){
             var eventCode = "[[${Event.eventID}]]";
             var estimated_num = "[[${Event.estimatedAttendeeNumber}]]";
             //template questions is basically an array of string, corresponded to each question in order
             var template_questions = "[[${templateQuestions}]]";
             var event = new EventSource("/host/updateFeedback?eventCode=" + eventCode);
+            totalFeedbackNum = 0;
             
             //print template questions
             {   
@@ -160,9 +164,13 @@
                         });
                     });
 
-                    //Scroll to the bottom to show the new feedback
-                    var objDiv = document.getElementById("feedbackContainer");
-                    objDiv.scrollTop = objDiv.scrollHeight;
+                    //Auto scroll to the bottom only if there is new feedback
+                    if (feedback.length > totalFeedbackNum) {
+                        totalFeedbackNum = feedback.length;
+                        var objDiv = document.getElementById("feedbackContainer");
+                        objDiv.scrollTop = objDiv.scrollHeight;
+                    }
+
                     
                     //average mood
                     //to ensure accuracy, we won't display the average mood until there are over 10% of the estimated attendees who have submitted feedback
