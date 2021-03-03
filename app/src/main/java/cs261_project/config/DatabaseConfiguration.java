@@ -1,5 +1,7 @@
 package cs261_project.config;
 
+import java.util.Properties;
+
 import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
@@ -7,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.sqlite.SQLiteConfig;
 
 /**
  * Configurate the database connectors
@@ -27,6 +30,11 @@ public class DatabaseConfiguration {
         //tell JDBC something about the database we are using
         source.setDriverClassName("org.sqlite.JDBC");
         source.setUrl("jdbc:sqlite:" + DatabaseConfiguration.DATABASE_NAME);
+
+        //enable foreign key
+        Properties prop = new Properties();
+        prop.setProperty("foreign_keys", "true");
+        source.setConnectionProperties(prop);
         
         return source;
     }

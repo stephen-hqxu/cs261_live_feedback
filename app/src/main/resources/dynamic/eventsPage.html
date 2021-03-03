@@ -19,13 +19,39 @@
             <li th:object="${events}" th:each="events: ${events}" th:id="'eventItem_' + *{eventID}">
                 <p th:text="*{EventName}" style="font-weight: bold;">XXX</p>
 
-                <th:block th:with="cond=${current_time} < *{FinishDateTime}">
-                    <p class="flag" th:if="${cond}" style="color: forestgreen">(Active)</p>
-                    <p class="flag" th:unless="${cond}" style="color: red">(Ended)</p>
+                <th:block th:switch="*{getEventStatus()}">
+                    <p class="flag" th:case="-1" style="color: darkorange">(Not Started)</p>
+                    <p class="flag" th:case="0" style="color: forestgreen">(Active)</p>
+                    <p class="flag" th:case="1" style="color: tomato">(Ended)</p>
                 </th:block>
                 <br>
                 <button name="eventCode" th:attr="value=*{EventID}" type="submit" class="w3-btn w3-blue w3-round-medium w3-padding">View Details</button>
-                <button name="deleteEvent" th:onclick="'del_event(' + *{eventID} + ');'" type="button" class="w3-btn w3-blue w3-round-medium w3-padding">Delete Event</button>
+                <button th:id="'deleteEvent_' + *{eventID}" type="button" class="w3-btn w3-blue w3-round-medium w3-padding">Delete Event</button>
+            
+                <script th:inline="javascript">
+                    {
+                        const eventID = [[*{eventID}]];
+                        const eventName = [[*{eventName}]];
+
+                        $("#deleteEvent_" + eventID).click(function(){
+                            //ask user to confirm
+                            const val = confirm("Do you want to delete event " + eventName + "?");
+                            if(val == true){
+                                $.ajax({
+                                url: '/host/deleteEvent?eventCode=' + eventID,
+                                type: 'DELETE', 
+                                success: function(response){
+                                    if(response == true){
+                                        //remove the element without refreshing the page
+                                        $("#eventItem_" + eventID).remove();
+                                    }
+                                }
+                            });
+                            }
+                        });
+                    }
+                </script>
+
             </li>
         </ul>
 
@@ -40,28 +66,6 @@
         <button type="submit" class="w3-btn w3-blue-grey w3-round-xxlarge w3-padding">Go back to menu</button>
 
     </form>
-
-    <script>
-
-        function del_event(eventID){
-            //ask user to confirm
-            const val = confirm("Do you want to delete event " + eventID + "?");
-            if(val == true){
-                $.ajax({
-                url: '/host/deleteEvent?eventCode=' + eventID,
-                type: 'DELETE', 
-                success: function(response){
-                    if(response == true){
-                        //remove the element without refreshing the page
-                        $("#eventItem_" + eventID).remove();
-                    }
-                }
-            });
-            }
-            
-        }
-
-    </script>
 
 </body>
 </html>

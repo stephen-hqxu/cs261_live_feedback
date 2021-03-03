@@ -15,7 +15,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -112,6 +111,12 @@ public final class HostProcessor {
                 model.addAttribute("error", "Start time must go before finish time.");
                 return "newEventPage";
             }
+            //make sure end time happens before current time
+            if(LocalDateTime.now().compareTo(event.getFinishDateTime()) > 0){
+                model.addAttribute("error", "You cannot create an event that has already finished.");
+                return "newEventPage";
+            }
+
         }catch(DateTimeParseException dtpe){
             model.addAttribute("error", "Invalid date time input.");
             return "newEventPage";

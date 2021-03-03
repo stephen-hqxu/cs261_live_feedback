@@ -131,4 +131,23 @@ public class Event {
         return this.Estimated;
     }
 
+    /**
+     * Get the event status
+     * @return If event has yet started, return -1.
+     * If event is active, return 0.
+     * If event has ended, return 1
+     */
+    public byte getEventStatus(){
+        //get the current time
+        final LocalDateTime current = LocalDateTime.now();
+
+        if(current.compareTo(this.Start) < 0){
+            return -1;
+        }else if(current.compareTo(this.Finish) > 0){
+            return 1;
+        }
+
+        return 0;
+    }
+
 }
