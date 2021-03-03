@@ -28,8 +28,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import com.google.protobuf.TextFormat.ParseException;
-
 /**
  * Configuration class for web application
  * @author Group 12 - Stephen Xu, JuanYan Huo, Ellen Tatum, JiaQi Lv, Alexander Odewale

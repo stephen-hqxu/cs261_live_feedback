@@ -12,8 +12,10 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -144,6 +146,19 @@ public final class HostProcessor {
             "Your new event has been created. Redirecting back to home page...", 
             "/host/hostHomePage", 
             model);
+    }
+
+    //AJAX request
+    @DeleteMapping("/deleteEvent")
+    @ResponseBody
+    public final boolean handleDeleteEvent(@RequestParam("eventCode") String eventid){
+        final DatabaseConnection db = App.getInstance().getDbConnection();
+
+        if(db.deleteEvent(Integer.parseInt(eventid))){
+            return true;
+        }
+
+        return false;
     }
 
     @GetMapping("/viewFeedback")

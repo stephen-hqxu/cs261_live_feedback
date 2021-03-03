@@ -27,12 +27,12 @@ CREATE TABLE Feedback(
     FID INTEGER PRIMARY KEY AUTOINCREMENT,
     EventID INTEGER NOT NULL,
     AttendeeName VARCHAR(50),
-    Feedback VARCHAR(65535) NOT NULL,
+    Feedback VARCHAR(150) NOT NULL,
     Mood TINYINT(1) NOT NULL,
     -- Answer contains JSON text for the answers to the template that host assigned
     Answer VARCHAR(65535),
     Additionals VARCHAR(50),
-    FOREIGN KEY(EventID) REFERENCES Events(EID)
+    FOREIGN KEY(EventID) REFERENCES Events(EID) ON DELETE CASCADE
 );
 
 DROP TABLE Template;
@@ -42,5 +42,11 @@ CREATE TABLE Template(
     EventID INTEGER NOT NULL UNIQUE,
     -- Question contains JSON text for host-assigned questions
     Question VARCHAR(65535) NOT NULL,
-    FOREIGN KEY(EventID) REFERENCES Events(EID)
-)
+    FOREIGN KEY(EventID) REFERENCES Events(EID) ON DELETE CASCADE
+);
+
+CREATE TRIGGER IF NOT EXISTS delete_events AFTER DELETE ON Events
+BEGIN
+    DELETE FROM Feedback WHERE EventID = OLD.EID;
+    DELETE FROM Template WHERE EventID = OLD.EID;
+END;

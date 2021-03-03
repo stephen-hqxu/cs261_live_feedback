@@ -82,8 +82,8 @@
         var totalFeedbackNum;
 
         $(document).ready(function(){
-            var eventCode = "[[${Event.eventID}]]";
-            var estimated_num = "[[${Event.estimatedAttendeeNumber}]]";
+            const eventCode = "[[${Event.eventID}]]";
+            const estimated_num = "[[${Event.estimatedAttendeeNumber}]]";
             //template questions is basically an array of string, corresponded to each question in order
             var template_questions = "[[${templateQuestions}]]";
             var event = new EventSource("/host/updateFeedback?eventCode=" + eventCode);

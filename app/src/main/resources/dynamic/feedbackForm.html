@@ -54,8 +54,8 @@
 
         var template_questions = "[[${question}]]";
 
-        var eventStart = Date.parse("[[${Event.startDateTime}]]");
-        var eventFinish = Date.parse("[[${Event.finishDateTime}]]");
+        const eventStart = Date.parse("[[${Event.startDateTime}]]");
+        const eventFinish = Date.parse("[[${Event.finishDateTime}]]");
 
         //this function will be called as soon as the webpage loads up
         $(document).ready(function(){

@@ -163,6 +163,19 @@ public class DatabaseConnection implements IDatabaseConnection {
     }
 
     @Override
+    public boolean deleteEvent(int eventID){
+        final String sql = "DELETE FROM Events WHERE EID = ?";
+
+        try{
+            this.source.update(sql, eventID);
+        }catch(DataAccessException dae){
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
     public List<Feedback> fetchFeedbacks(int eventID){
         final String sql = "SELECT * FROM Feedback WHERE EventID = ?";
 
@@ -220,12 +233,6 @@ public class DatabaseConnection implements IDatabaseConnection {
     public void deleteUser(String username){
         String sql = "DELETE FROM Users WHERE UserName = ?";
         this.source.update(sql, username);
-    }
-
-    //This method is for testing purposes
-    public void deleteEvent(int eventID){
-        String sql = "DELETE FROM Events WHERE EID = ?";
-        this.source.update(sql, eventID);
     }
 
     //This method is for testing purposes

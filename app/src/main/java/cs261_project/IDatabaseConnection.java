@@ -80,6 +80,13 @@ public interface IDatabaseConnection {
     public abstract int newEvent(Event event);
 
     /**
+     * Delete a event specified by the event ID
+     * @param eventID The event with such ID to be deleted
+     * @return True if event has been deleted.
+     */
+    public abstract boolean deleteEvent(int eventID);
+
+    /**
      * Fetch all feedbacks with a given event ID for the event host, for which the feedbacks belong to.
      * @see Feedback
      * @param eventID The event ID to lookup.

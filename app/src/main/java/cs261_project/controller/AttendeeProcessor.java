@@ -96,7 +96,7 @@ public final class AttendeeProcessor {
         //after the feedback has been submitted, we should automatically make them leave the event
         //since we are not asking attendees to submit multiple feedback
         return IndexProcessor.renderRedirect(
-            "Thank you, we have received your valuable feedback. Redirecting back to index page...", 
+            "Thank you, we have received your valuable feedback. Redirecting back to the home page...", 
             "/attendee/leaveEvent", 
             model);
         
